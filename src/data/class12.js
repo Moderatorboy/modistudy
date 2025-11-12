@@ -1,7 +1,7 @@
 export const class11 = {
   id: "class11",
   name: "Class 11th",
-  img: "/images/batchA.png",
+  img: "/images/batchB.jpg",
   subjects: [
     {
       id: "phy",
