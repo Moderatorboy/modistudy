@@ -1,97 +1,53 @@
-export const class12 = {
-  id: "class12",
-  name: "Class 12th",
-  img: "/images/batchB.png", // Batch image
+export const class11 = {
+  id: "class11",
+  name: "Class 11th",
+  img: "/images/batchA.png",
   subjects: [
     {
-      id: "phy12",
-      name: "PHYSICS (JP SIR)",
+      id: "phy",
+      name: "Physics",
       chapters: [
         {
-          id: "c12_1",
-          name: "ELECTROSTATICS",
-          notes: "https://example.com/notes_electrostatics.pdf",
-          sheet: "https://example.com/sheet_electrostatics.pdf",
-          dpp: "https://example.com/dpp_electrostatics.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcElectro",
+          id: "c1",
+          name: "Basic Mechanics",
+          notes: "https://example.com/notes_mechanics.pdf",
+          sheet: "https://example.com/sheet_mechanics.pdf",
+          dpp: "https://example.com/dpp_mechanics.pdf",
+          dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
           lectures: [
-            { id: "JP_ES_L01", title: "Lecture 01", embed: "https://rumble.com/embed/JP_ES_L01" },
-            { id: "JP_ES_L02", title: "Lecture 02", embed: "https://rumble.com/embed/JP_ES_L02" }
-          ]
+            { id: "l1", title: "Lecture 1 — Intro", embed: "https://odysee.com/$/embed/p8Ho7dGvF1" },
+            { id: "l2", title: "Lecture 2 — Motion", embed: "https://www.youtube.com/embed/tgbNymZ7vqY" },
+          ],
         },
         {
-          id: "c12_2",
-          name: "CURRENT ELECTRICITY",
-          notes: "https://example.com/notes_current.pdf",
-          sheet: "https://example.com/sheet_current.pdf",
-          dpp: "https://example.com/dpp_current.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcCurrent",
+          id: "c2",
+          name: "Laws of Motion",
+          notes: "https://example.com/notes_lawsmotion.pdf",
+          sheet: "https://example.com/sheet_lawsmotion.pdf",
+          dpp: "https://example.com/dpp_lawsmotion.pdf",
+          dppVideo: "https://odysee.com/$/embed/abc123",
           lectures: [
-            { id: "JP_CE_L01", title: "Lecture 01", embed: "https://rumble.com/embed/JP_CE_L01" },
-            { id: "JP_CE_L02", title: "Lecture 02", embed: "https://rumble.com/embed/JP_CE_L02" }
-          ]
-        }
-      ]
+            { id: "l3", title: "Lecture 3 — Force", embed: "https://odysee.com/$/embed/xyz123" },
+          ],
+        },
+      ],
     },
     {
-      id: "chem12",
-      name: "CHEMISTRY (AKK SIR)",
+      id: "chem",
+      name: "Chemistry",
       chapters: [
         {
-          id: "c12_3",
-          name: "SOLID STATE",
-          notes: "https://example.com/notes_solid.pdf",
-          sheet: "https://example.com/sheet_solid.pdf",
-          dpp: "https://example.com/dpp_solid.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcSolid",
+          id: "c1",
+          name: "Chemical Bonding",
+          notes: "https://example.com/notes_cb.pdf",
+          sheet: "https://example.com/sheet_cb.pdf",
+          dpp: "https://example.com/dpp_cb.pdf",
+          dppVideo: "https://odysee.com/$/embed/cbVideo",
           lectures: [
-            { id: "AKK_SS_L01", title: "Lecture 01", embed: "https://rumble.com/embed/AKK_SS_L01" },
-            { id: "AKK_SS_L02", title: "Lecture 02", embed: "https://rumble.com/embed/AKK_SS_L02" }
-          ]
+            { id: "l1", title: "Lecture 1 — Ionic Bond", embed: "https://odysee.com/$/embed/ionic" },
+          ],
         },
-        {
-          id: "c12_4",
-          name: "CHEMICAL KINETICS",
-          notes: "https://example.com/notes_kinetics.pdf",
-          sheet: "https://example.com/sheet_kinetics.pdf",
-          dpp: "https://example.com/dpp_kinetics.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcKinetics",
-          lectures: [
-            { id: "AKK_CK_L01", title: "Lecture 01", embed: "https://rumble.com/embed/AKK_CK_L01" },
-            { id: "AKK_CK_L02", title: "Lecture 02", embed: "https://rumble.com/embed/AKK_CK_L02" }
-          ]
-        }
-      ]
+      ],
     },
-    {
-      id: "math12",
-      name: "MATHEMATICS (GB SIR)",
-      chapters: [
-        {
-          id: "c12_5",
-          name: "INVERSE TRIGONOMETRIC FUNCTION",
-          notes: "https://example.com/notes_itf.pdf",
-          sheet: "https://example.com/sheet_itf.pdf",
-          dpp: "https://example.com/dpp_itf.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcITF",
-          lectures: [
-            { id: "GB_ITF_L01", title: "Lecture 01", embed: "https://rumble.com/embed/GB_ITF_L01" },
-            { id: "GB_ITF_L02", title: "Lecture 02", embed: "https://rumble.com/embed/GB_ITF_L02" }
-          ]
-        },
-        {
-          id: "c12_6",
-          name: "CONTINUITY",
-          notes: "https://example.com/notes_cont.pdf",
-          sheet: "https://example.com/sheet_cont.pdf",
-          dpp: "https://example.com/dpp_cont.pdf",
-          dppVideo: "https://odysee.com/$/embed/abcCont",
-          lectures: [
-            { id: "GB_CONT_L01", title: "Lecture 01", embed: "https://rumble.com/embed/GB_CONT_L01" },
-            { id: "GB_CONT_L02", title: "Lecture 02", embed: "https://rumble.com/embed/GB_CONT_L02" }
-          ]
-        }
-      ]
-    }
-  ]
+  ],
 };
