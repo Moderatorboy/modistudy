@@ -26,8 +26,8 @@ function App() {
             {
               id: "c1",
               name: "Basic Maths",
-              notes: "https://example.com/notes-basic-maths.pdf",
-              dpp: "https://example.com/dpp-basic-maths.pdf",
+              notes: "https://example.com/notes.pdf",
+              dpp: "https://example.com/dpp.pdf",
               dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
               lectures: [
                 { id: "l1", title: "Lecture 1 — Intro", embed: "https://odysee.com/$/embed/p8Ho7dGvF1" },
@@ -65,6 +65,7 @@ function App() {
         </div>
       )}
 
+      {/* Batch Grid */}
       {!selectedBatch && (
         <div className="grid">
           {filteredBatches.map((batch) => (
@@ -92,9 +93,7 @@ function App() {
               {sub.name} — View Chapters
             </button>
           ))}
-          <button onClick={() => setSelectedBatch(null)} className="back-btn">
-            🔙 Back to Batches
-          </button>
+          <button onClick={() => setSelectedBatch(null)} className="back-btn">🔙 Back to Batches</button>
         </div>
       )}
 
@@ -107,13 +106,11 @@ function App() {
               {ch.name} — View Lectures
             </button>
           ))}
-          <button onClick={() => setSelectedSubject(null)} className="back-btn">
-            🔙 Back to Subjects
-          </button>
+          <button onClick={() => setSelectedSubject(null)} className="back-btn">🔙 Back to Subjects</button>
         </div>
       )}
 
-      {/* Lectures + Notes + DPP + DPP Video */}
+      {/* Lecture + Notes/DPP/DPP Video */}
       {selectedChapter && (
         <div className="list">
           <h2>🎬 {selectedChapter.name}</h2>
@@ -133,9 +130,7 @@ function App() {
             </div>
           ))}
 
-          <button onClick={() => setSelectedChapter(null)} className="back-btn">
-            🔙 Back to Chapters
-          </button>
+          <button onClick={() => setSelectedChapter(null)} className="back-btn">🔙 Back to Chapters</button>
         </div>
       )}
     </div>
