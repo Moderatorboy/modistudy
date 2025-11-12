@@ -1,73 +1,80 @@
-export const class11 = {
-  id: "class11",
-  name: "Class 11th",
-  image: "/images/batchA.png", // 👈 Add this line (photo path)
-  subjects: [
-    {
-      id: "phy11",
-      name: "PHYSICS (NS SIR)",
-      chapters: [
-        {
-          id: "c11_1",
-          name: "UNITS & DIMENSIONS",
-          lectures: [
-            { id: "NS_UAD_L01", title: "Lecture 01", url: "https://rumble.com/embed/NS_UAD_L01" },
-            { id: "NS_UAD_L02", title: "Lecture 02", url: "https://rumble.com/embed/NS_UAD_L02" }
-          ]
-        },
-        {
-          id: "c11_2",
-          name: "KINEMATICS",
-          lectures: [
-            { id: "NS_KIN_L01", title: "Lecture 01", url: "https://rumble.com/embed/NS_KIN_L01" },
-            { id: "NS_KIN_L02", title: "Lecture 02", url: "https://rumble.com/embed/NS_KIN_L02" }
-          ]
-        }
-      ]
-    },
-    {
-      id: "chem11",
-      name: "CHEMISTRY (AKK SIR)",
-      chapters: [
-        {
-          id: "c11_3",
-          name: "MOLE CONCEPT",
-          lectures: [
-            { id: "AKK_MC_L01", title: "Lecture 01", url: "https://rumble.com/embed/AKK_MC_L01" },
-            { id: "AKK_MC_L02", title: "Lecture 02", url: "https://rumble.com/embed/AKK_MC_L02" }
-          ]
-        },
-        {
-          id: "c11_4",
-          name: "ATOMIC STRUCTURE",
-          lectures: [
-            { id: "AKK_AS_L01", title: "Lecture 01", url: "https://rumble.com/embed/AKK_AS_L01" },
-            { id: "AKK_AS_L02", title: "Lecture 02", url: "https://rumble.com/embed/AKK_AS_L02" }
-          ]
-        }
-      ]
-    },
-    {
-      id: "math11",
-      name: "MATHEMATICS (VG SIR)",
-      chapters: [
-        {
-          id: "c11_5",
-          name: "FUNCTIONS",
-          lectures: [
-            { id: "VG_FUNC_L01", title: "Lecture 01", url: "https://rumble.com/embed/VG_FUNC_L01" },
-            { id: "VG_FUNC_L02", title: "Lecture 02", url: "https://rumble.com/embed/VG_FUNC_L02" }
-          ]
-        },
-        {
-          id: "c11_6",
-          name: "LIMITS",
-          lectures: [
-            { id: "VG_LIMIT_L01", title: "Lecture 01", url: "https://rumble.com/embed/VG_LIMIT_L01" },
-            { id: "VG_LIMIT_L02", title: "Lecture 02", url: "https://rumble.com/embed/VG_LIMIT_L02" }
-          ]
-        }
-      ]
-    }
-  ]
-};
+export const batches = [
+  {
+    id: "b1",
+    name: "CLASS 11th (JP SIR)",
+    img: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800",
+    subjects: [
+      {
+        id: "phy",
+        name: "Physics",
+        chapters: [
+          {
+            id: "c1",
+            name: "Basic Mechanics",
+            notes: "https://example.com/notes_mechanics.pdf",
+            sheet: "https://example.com/sheet_mechanics.pdf",
+            dpp: "https://example.com/dpp_mechanics.pdf",
+            dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
+            lectures: [
+              { id: "l1", title: "Lecture 1 — Intro", embed: "https://odysee.com/$/embed/p8Ho7dGvF1" },
+              { id: "l2", title: "Lecture 2 — Motion", embed: "https://www.youtube.com/embed/tgbNymZ7vqY" },
+            ],
+          },
+          {
+            id: "c2",
+            name: "Laws of Motion",
+            notes: "https://example.com/notes_lawsmotion.pdf",
+            sheet: "https://example.com/sheet_lawsmotion.pdf",
+            dpp: "https://example.com/dpp_lawsmotion.pdf",
+            dppVideo: "https://odysee.com/$/embed/abc123",
+            lectures: [
+              { id: "l3", title: "Lecture 3 — Force", embed: "https://odysee.com/$/embed/xyz123" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "chem",
+        name: "Chemistry",
+        chapters: [
+          {
+            id: "c1",
+            name: "Chemical Bonding",
+            notes: "https://example.com/notes_cb.pdf",
+            sheet: "https://example.com/sheet_cb.pdf",
+            dpp: "https://example.com/dpp_cb.pdf",
+            dppVideo: "https://odysee.com/$/embed/cbVideo",
+            lectures: [
+              { id: "l1", title: "Lecture 1 — Ionic Bond", embed: "https://odysee.com/$/embed/ionic" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: "b2",
+    name: "CLASS 12th (NK SIR)",
+    img: "https://images.unsplash.com/photo-1584697964192-89e9e02c5b87?w=800",
+    subjects: [
+      {
+        id: "phy",
+        name: "Physics",
+        chapters: [
+          {
+            id: "c1",
+            name: "Electrostatics",
+            notes: "https://example.com/notes_electro.pdf",
+            sheet: "https://example.com/sheet_electro.pdf",
+            dpp: "https://example.com/dpp_electro.pdf",
+            dppVideo: "https://odysee.com/$/embed/electroVideo",
+            lectures: [
+              { id: "l1", title: "Lecture 1 — Coulomb's Law", embed: "https://odysee.com/$/embed/coulomb" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
