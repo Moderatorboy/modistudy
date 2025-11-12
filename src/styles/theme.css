@@ -114,7 +114,7 @@ h1.logo{
 /* 📺 Video Embed */
 .embed iframe{width:100%;height:62vh;border-radius:14px;border:none;box-shadow:0 0 40px rgba(6,182,212,0.25);}
 
-/* ✨ Notes / DPP / DPP Video */
+/* ✨ Notes / Sheet / DPP / DPP Video */
 .resources{
   display:flex;justify-content:center;flex-wrap:wrap;gap:15px;margin:20px 0;
 }
