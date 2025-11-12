@@ -24,29 +24,45 @@ export default function App() {
     document.body.classList.toggle('alt-theme', !darkTheme);
   };
 
+  // 🏫 Batch list
   const batches = [
-    { id: 'class11', name: 'Class 11th', data: class11, image: '/images/class11.jpg' },
-    { id: 'class12', name: 'Class 12th', data: class12, image: '/images/class12.jpg' }
+    { id: 'class11', name: 'Class 11th ✨', data: class11, image: '/images/class11.jpg' },
+    { id: 'class12', name: 'Class 12th 🚀', data: class12, image: '/images/class12.jpg' }
   ];
 
+  // 🔍 Search filter
   const filtered = batches.filter(b => {
     if (!q) return true;
     const s = q.toLowerCase();
     return b.name.toLowerCase().includes(s);
   });
 
+  // ♻️ Reset function
   function reset(level) {
-    if (level === 'batch') { setSelectedBatch(null); setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
-    else if (level === 'subject') { setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
-    else if (level === 'chapter') { setSelectedChapter(null); setSelectedVideo(null); }
+    if (level === 'batch') {
+      setSelectedBatch(null);
+      setSelectedSubject(null);
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    } else if (level === 'subject') {
+      setSelectedSubject(null);
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    } else if (level === 'chapter') {
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    }
   }
 
   return (
-    <div>
-      {/* 🌗 THEME TOGGLE BUTTON */}
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {darkTheme ? '☀️ Light' : '🌙 Dark'}
-      </button>
+    <div className="app-container">
+
+      {/* 🌗 THEME TOGGLE CENTER TOP */}
+      <div className="theme-toggle-wrapper">
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {darkTheme ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
 
       {/* 🌟 HEADER */}
       <Header />
