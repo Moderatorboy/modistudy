@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import BatchGrid from './components/BatchGrid';
 import SubjectList from './components/SubjectList';
@@ -17,94 +16,84 @@ export default function App() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [q, setQ] = useState('');
 
-  // 🌗 Theme toggle logic
+  // 🌗 Theme toggle
   const [darkTheme, setDarkTheme] = useState(true);
   const toggleTheme = () => {
-    const newTheme = !darkTheme;
-    setDarkTheme(newTheme);
+    setDarkTheme(prev => !prev);
     document.body.classList.toggle('alt-theme', !darkTheme);
   };
 
-  // 📘 Batches
   const batches = [
-    { id: 'class11', name: 'Class 11th ✨', data: class11, image: '/images/class11.jpg' },
-    { id: 'class12', name: 'Class 12th 🚀', data: class12, image: '/images/class12.jpg' }
+    { id: 'class11', name: 'Class 11th', data: class11, image: '/images/class11.jpg' },
+    { id: 'class12', name: 'Class 12th', data: class12, image: '/images/class12.jpg' }
   ];
 
-  // 🔍 Search filter
-  const filtered = batches.filter(b =>
-    b.name.toLowerCase().includes(q.toLowerCase())
-  );
+  const filtered = batches.filter(b => !q || b.name.toLowerCase().includes(q.toLowerCase()));
 
-  // ♻️ Reset navigation
   function reset(level) {
     if (level === 'batch') {
-      setSelectedBatch(null);
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
+      setSelectedBatch(null); setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null);
     } else if (level === 'subject') {
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
+      setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null);
     } else if (level === 'chapter') {
-      setSelectedChapter(null);
-      setSelectedVideo(null);
+      setSelectedChapter(null); setSelectedVideo(null);
     }
   }
 
   return (
     <div className="app-container">
-      {/* 🌗 THEME TOGGLE CENTER TOP */}
-      <div className="theme-toggle-wrapper">
+      {/* 🌟 HEADER */}
+      <header className="hero-header">
+        <div className="header-bg"></div>
+        <h1 className="brand">MODESTUDY</h1>
         <button className="theme-toggle" onClick={toggleTheme}>
           {darkTheme ? '☀️ Light Mode' : '🌙 Dark Mode'}
         </button>
-      </div>
+      </header>
 
-      <Header />
+      {/* 🔍 SEARCH */}
       <SearchBar value={q} onChange={setQ} />
 
-      {/* 🧱 Batch Grid */}
+      {/* 📚 BATCHES */}
       {!selectedBatch && (
         <BatchGrid
           batches={filtered.map(b => ({
             id: b.id,
             name: b.name,
             image: b.image,
-            onClick: () => setSelectedBatch(b)
+            onClick: () => setSelectedBatch(b.data)
           }))}
         />
       )}
 
-      {/* 📘 Subject List */}
+      {/* 📘 SUBJECTS */}
       {selectedBatch && !selectedSubject && (
         <SubjectList
-          batch={selectedBatch.data}
-          onSelect={s => setSelectedSubject(s)}
+          batch={selectedBatch}
+          onSelect={setSelectedSubject}
           onBack={() => reset('batch')}
         />
       )}
 
-      {/* 🧩 Chapter List */}
+      {/* 🧩 CHAPTERS */}
       {selectedSubject && !selectedChapter && (
         <ChapterList
           subject={selectedSubject}
-          onSelect={c => setSelectedChapter(c)}
+          onSelect={setSelectedChapter}
           onBack={() => reset('subject')}
         />
       )}
 
-      {/* 🎥 Lectures */}
+      {/* 🎥 LECTURES */}
       {selectedChapter && !selectedVideo && (
         <ContentTabs
           chapter={selectedChapter}
-          onSelectVideo={v => setSelectedVideo(v)}
+          onSelectVideo={setSelectedVideo}
           onBack={() => reset('chapter')}
         />
       )}
 
-      {/* ▶️ Video Player */}
+      {/* ▶️ VIDEO PLAYER */}
       {selectedVideo && (
         <VideoPlayer
           video={selectedVideo}
