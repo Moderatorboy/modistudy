@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./styles/theme.css";
-import { batches } from "./data/class11";
+import { class11 } from './data/class11';
+import { class12 } from './data/class12';
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
