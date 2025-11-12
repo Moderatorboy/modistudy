@@ -20,24 +20,23 @@ export default function App() {
   // 🌗 Theme toggle logic
   const [darkTheme, setDarkTheme] = useState(true);
   const toggleTheme = () => {
-    setDarkTheme(!darkTheme);
+    const newTheme = !darkTheme;
+    setDarkTheme(newTheme);
     document.body.classList.toggle('alt-theme', !darkTheme);
   };
 
-  // 🏫 Batch list
+  // 📘 Batches
   const batches = [
     { id: 'class11', name: 'Class 11th ✨', data: class11, image: '/images/class11.jpg' },
     { id: 'class12', name: 'Class 12th 🚀', data: class12, image: '/images/class12.jpg' }
   ];
 
   // 🔍 Search filter
-  const filtered = batches.filter(b => {
-    if (!q) return true;
-    const s = q.toLowerCase();
-    return b.name.toLowerCase().includes(s);
-  });
+  const filtered = batches.filter(b =>
+    b.name.toLowerCase().includes(q.toLowerCase())
+  );
 
-  // ♻️ Reset function
+  // ♻️ Reset navigation
   function reset(level) {
     if (level === 'batch') {
       setSelectedBatch(null);
@@ -56,7 +55,6 @@ export default function App() {
 
   return (
     <div className="app-container">
-
       {/* 🌗 THEME TOGGLE CENTER TOP */}
       <div className="theme-toggle-wrapper">
         <button className="theme-toggle" onClick={toggleTheme}>
@@ -64,34 +62,31 @@ export default function App() {
         </button>
       </div>
 
-      {/* 🌟 HEADER */}
       <Header />
-
-      {/* 🔍 SEARCH BAR */}
       <SearchBar value={q} onChange={setQ} />
 
-      {/* 📚 BATCH GRID */}
+      {/* 🧱 Batch Grid */}
       {!selectedBatch && (
         <BatchGrid
           batches={filtered.map(b => ({
             id: b.id,
             name: b.name,
             image: b.image,
-            onClick: () => setSelectedBatch(b.data)
+            onClick: () => setSelectedBatch(b)
           }))}
         />
       )}
 
-      {/* 📘 SUBJECTS */}
+      {/* 📘 Subject List */}
       {selectedBatch && !selectedSubject && (
         <SubjectList
-          batch={selectedBatch}
+          batch={selectedBatch.data}
           onSelect={s => setSelectedSubject(s)}
           onBack={() => reset('batch')}
         />
       )}
 
-      {/* 🧩 CHAPTERS */}
+      {/* 🧩 Chapter List */}
       {selectedSubject && !selectedChapter && (
         <ChapterList
           subject={selectedSubject}
@@ -100,7 +95,7 @@ export default function App() {
         />
       )}
 
-      {/* 🎥 LECTURES */}
+      {/* 🎥 Lectures */}
       {selectedChapter && !selectedVideo && (
         <ContentTabs
           chapter={selectedChapter}
@@ -109,7 +104,7 @@ export default function App() {
         />
       )}
 
-      {/* ▶️ VIDEO PLAYER */}
+      {/* ▶️ Video Player */}
       {selectedVideo && (
         <VideoPlayer
           video={selectedVideo}
