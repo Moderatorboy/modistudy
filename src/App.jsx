@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import BatchGrid from './components/BatchGrid';
 import SubjectList from './components/SubjectList';
@@ -30,14 +29,23 @@ export default function App() {
 
   const filtered = batches.filter(b => {
     if (!q) return true;
-    const s = q.toLowerCase();
-    return b.name.toLowerCase().includes(s);
+    return b.name.toLowerCase().includes(q.toLowerCase());
   });
 
   function reset(level) {
-    if (level === 'batch') { setSelectedBatch(null); setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
-    else if (level === 'subject') { setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
-    else if (level === 'chapter') { setSelectedChapter(null); setSelectedVideo(null); }
+    if (level === 'batch') {
+      setSelectedBatch(null);
+      setSelectedSubject(null);
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    } else if (level === 'subject') {
+      setSelectedSubject(null);
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    } else if (level === 'chapter') {
+      setSelectedChapter(null);
+      setSelectedVideo(null);
+    }
   }
 
   return (
@@ -45,17 +53,17 @@ export default function App() {
       {/* 🌗 THEME TOGGLE */}
       <div className="theme-toggle-wrapper">
         <button className="theme-toggle" onClick={toggleTheme}>
-          {darkTheme ? '🌙 Dark Mode' : '☀️ Light Mode'}
+          {darkTheme ? '☀️ Light Mode' : '🌙 Dark Mode'}
         </button>
       </div>
 
-      {/* 🪄 HEADER */}
-      <Header />
+      {/* 🔥 MODESTUDY LOGO */}
+      <h1 className="logo-glow">MODESTUDY</h1>
 
       {/* 🔍 SEARCH BAR */}
       <SearchBar value={q} onChange={setQ} />
 
-      {/* 🧠 CONTENT */}
+      {/* 🧠 BATCH GRID */}
       {!selectedBatch && (
         <BatchGrid
           batches={filtered.map(b => ({
@@ -67,6 +75,7 @@ export default function App() {
         />
       )}
 
+      {/* 📘 SUBJECTS */}
       {selectedBatch && !selectedSubject && (
         <SubjectList
           batch={selectedBatch}
@@ -75,6 +84,7 @@ export default function App() {
         />
       )}
 
+      {/* 🧩 CHAPTERS */}
       {selectedSubject && !selectedChapter && (
         <ChapterList
           subject={selectedSubject}
@@ -83,6 +93,7 @@ export default function App() {
         />
       )}
 
+      {/* 🎥 LECTURES */}
       {selectedChapter && !selectedVideo && (
         <ContentTabs
           chapter={selectedChapter}
@@ -91,6 +102,7 @@ export default function App() {
         />
       )}
 
+      {/* ▶️ VIDEO PLAYER */}
       {selectedVideo && (
         <VideoPlayer
           video={selectedVideo}
