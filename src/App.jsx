@@ -23,33 +23,20 @@ export default function App() {
   };
 
   const batches = [
-    { id: 'class11', name: 'Class 11th 💫', data: class11, image: '/images/class11.jpg' },
-    { id: 'class12', name: 'Class 12th 🚀', data: class12, image: '/images/class12.jpg' }
+    { id: 'class11', name: 'Class 11th 🔮', data: class11, image: '/images/class11.jpg' },
+    { id: 'class12', name: 'Class 12th 🚀', data: class12, image: '/images/class12.jpg' },
   ];
 
-  const filtered = batches.filter(b => {
-    if (!q) return true;
-    return b.name.toLowerCase().includes(q.toLowerCase());
-  });
+  const filtered = batches.filter(b => !q || b.name.toLowerCase().includes(q.toLowerCase()));
 
   function reset(level) {
-    if (level === 'batch') {
-      setSelectedBatch(null);
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    } else if (level === 'subject') {
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    } else if (level === 'chapter') {
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    }
+    if (level === 'batch') { setSelectedBatch(null); setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
+    else if (level === 'subject') { setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
+    else if (level === 'chapter') { setSelectedChapter(null); setSelectedVideo(null); }
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container fadeIn">
       {/* 🌗 THEME TOGGLE */}
       <div className="theme-toggle-wrapper">
         <button className="theme-toggle" onClick={toggleTheme}>
@@ -58,7 +45,10 @@ export default function App() {
       </div>
 
       {/* 🔥 MODESTUDY LOGO */}
-      <h1 className="logo-glow">MODESTUDY</h1>
+      <div className="brand-container">
+        <h1 className="logo-premium">MODESTUDY</h1>
+        <div className="underline-glow"></div>
+      </div>
 
       {/* 🔍 SEARCH BAR */}
       <SearchBar value={q} onChange={setQ} />
