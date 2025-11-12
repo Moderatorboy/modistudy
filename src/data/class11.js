@@ -52,29 +52,4 @@ export const batches = [
       },
     ],
   },
-
-  {
-    id: "b2",
-    name: "CLASS 12th (NK SIR)",
-    img: "https://images.unsplash.com/photo-1584697964192-89e9e02c5b87?w=800",
-    subjects: [
-      {
-        id: "phy",
-        name: "Physics",
-        chapters: [
-          {
-            id: "c1",
-            name: "Electrostatics",
-            notes: "https://example.com/notes_electro.pdf",
-            sheet: "https://example.com/sheet_electro.pdf",
-            dpp: "https://example.com/dpp_electro.pdf",
-            dppVideo: "https://odysee.com/$/embed/electroVideo",
-            lectures: [
-              { id: "l1", title: "Lecture 1 — Coulomb's Law", embed: "https://odysee.com/$/embed/coulomb" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
 ];
