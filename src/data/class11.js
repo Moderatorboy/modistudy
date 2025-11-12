@@ -1,7 +1,7 @@
 export const class11 = {
   id: "class11",
   name: "Class 11th",
-  image: "/images/class11.png", // 👈 Add this line (photo path)
+  image: "/images/batchA.png", // 👈 Add this line (photo path)
   subjects: [
     {
       id: "phy11",
