@@ -1,6 +1,7 @@
 export const class12 = {
   id: "class12",
   name: "Class 12th",
+  image: "/images/class12.jpg", // 👈 Add this line
   subjects: [
     {
       id: "phy12",
