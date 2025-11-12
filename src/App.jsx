@@ -6,13 +6,9 @@ import SubjectList from './components/SubjectList';
 import ChapterList from './components/ChapterList';
 import ContentTabs from './components/ContentTabs';
 import VideoPlayer from './components/VideoPlayer';
-
-// ✅ Correct imports
 import { class11 } from './data/class11';
 import { class12 } from './data/class12';
-
-// ✅ Combine both batches in one array
-const batches = [class11, class12];
+import './styles/theme.css';
 
 export default function App() {
   const [selectedBatch, setSelectedBatch] = useState(null);
@@ -21,68 +17,88 @@ export default function App() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [q, setQ] = useState('');
 
-  function reset(level) {
-    if (level === 'batch') {
-      setSelectedBatch(null);
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    } else if (level === 'subject') {
-      setSelectedSubject(null);
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    } else if (level === 'chapter') {
-      setSelectedChapter(null);
-      setSelectedVideo(null);
-    }
-  }
+  // 🌗 Theme toggle logic
+  const [darkTheme, setDarkTheme] = useState(true);
+  const toggleTheme = () => {
+    setDarkTheme(!darkTheme);
+    document.body.classList.toggle('alt-theme', !darkTheme);
+  };
 
-  // 🔍 Simple search filter
-  const filtered = batches.filter((b) => {
+  const batches = [
+    { id: 'class11', name: 'Class 11th', data: class11, image: '/images/class11.jpg' },
+    { id: 'class12', name: 'Class 12th', data: class12, image: '/images/class12.jpg' }
+  ];
+
+  const filtered = batches.filter(b => {
     if (!q) return true;
     const s = q.toLowerCase();
-    return (
-      b.name.toLowerCase().includes(s) ||
-      (b.class || '').toLowerCase().includes(s) ||
-      (b.sir || '').toLowerCase().includes(s)
-    );
+    return b.name.toLowerCase().includes(s);
   });
+
+  function reset(level) {
+    if (level === 'batch') { setSelectedBatch(null); setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
+    else if (level === 'subject') { setSelectedSubject(null); setSelectedChapter(null); setSelectedVideo(null); }
+    else if (level === 'chapter') { setSelectedChapter(null); setSelectedVideo(null); }
+  }
 
   return (
     <div>
+      {/* 🌗 THEME TOGGLE BUTTON */}
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {darkTheme ? '☀️ Light' : '🌙 Dark'}
+      </button>
+
+      {/* 🌟 HEADER */}
       <Header />
+
+      {/* 🔍 SEARCH BAR */}
       <SearchBar value={q} onChange={setQ} />
 
+      {/* 📚 BATCH GRID */}
       {!selectedBatch && (
-        <BatchGrid batches={filtered} onSelect={(b) => setSelectedBatch(b)} />
+        <BatchGrid
+          batches={filtered.map(b => ({
+            id: b.id,
+            name: b.name,
+            image: b.image,
+            onClick: () => setSelectedBatch(b.data)
+          }))}
+        />
       )}
 
+      {/* 📘 SUBJECTS */}
       {selectedBatch && !selectedSubject && (
         <SubjectList
           batch={selectedBatch}
-          onSelect={(s) => setSelectedSubject(s)}
+          onSelect={s => setSelectedSubject(s)}
           onBack={() => reset('batch')}
         />
       )}
 
+      {/* 🧩 CHAPTERS */}
       {selectedSubject && !selectedChapter && (
         <ChapterList
           subject={selectedSubject}
-          onSelect={(c) => setSelectedChapter(c)}
+          onSelect={c => setSelectedChapter(c)}
           onBack={() => reset('subject')}
         />
       )}
 
+      {/* 🎥 LECTURES */}
       {selectedChapter && !selectedVideo && (
         <ContentTabs
           chapter={selectedChapter}
-          onSelectVideo={(v) => setSelectedVideo(v)}
+          onSelectVideo={v => setSelectedVideo(v)}
           onBack={() => reset('chapter')}
         />
       )}
 
+      {/* ▶️ VIDEO PLAYER */}
       {selectedVideo && (
-        <VideoPlayer video={selectedVideo} onBack={() => setSelectedVideo(null)} />
+        <VideoPlayer
+          video={selectedVideo}
+          onBack={() => setSelectedVideo(null)}
+        />
       )}
     </div>
   );
