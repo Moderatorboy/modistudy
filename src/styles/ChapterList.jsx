@@ -25,13 +25,14 @@ function App() {
           chapters: [
             {
               id: "c1",
-              name: "Basic Maths",
+              name: "Basic Mechanics",
               notes: "https://example.com/notes.pdf",
+              sheet: "https://example.com/sheet.pdf",
               dpp: "https://example.com/dpp.pdf",
               dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
               lectures: [
                 { id: "l1", title: "Lecture 1 — Intro", embed: "https://odysee.com/$/embed/p8Ho7dGvF1" },
-                { id: "l2", title: "Lecture 2 — Vectors", embed: "https://www.youtube.com/embed/tgbNymZ7vqY" },
+                { id: "l2", title: "Lecture 2 — Motion", embed: "https://www.youtube.com/embed/tgbNymZ7vqY" },
               ],
             },
           ],
@@ -93,7 +94,7 @@ function App() {
               {sub.name} — View Chapters
             </button>
           ))}
-          <button onClick={() => setSelectedBatch(null)} className="back-btn">🔙 Back to Batches</button>
+          <button onClick={() => setSelectedBatch(null)}>🔙 Back to Batches</button>
         </div>
       )}
 
@@ -103,24 +104,27 @@ function App() {
           <h2>📗 {selectedSubject.name} — Chapters</h2>
           {selectedSubject.chapters.map((ch) => (
             <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
-              {ch.name} — View Lectures
+              {ch.name} — View Resources
             </button>
           ))}
-          <button onClick={() => setSelectedSubject(null)} className="back-btn">🔙 Back to Subjects</button>
+          <button onClick={() => setSelectedSubject(null)}>🔙 Back to Subjects</button>
         </div>
       )}
 
-      {/* Lecture + Notes/DPP/DPP Video */}
+      {/* Lecture + Notes/Sheet/DPP/DPP Video */}
       {selectedChapter && (
         <div className="list">
           <h2>🎬 {selectedChapter.name}</h2>
 
+          {/* Resources */}
           <div className="resources">
             <a href={selectedChapter.notes} target="_blank" rel="noopener noreferrer">📄 Notes PDF</a>
-            <a href={selectedChapter.dpp} target="_blank" rel="noopener noreferrer">🧩 DPP Sheet</a>
+            <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">📑 Sheet PDF</a>
+            <a href={selectedChapter.dpp} target="_blank" rel="noopener noreferrer">🧩 DPP PDF</a>
             <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">🎥 DPP Video</a>
           </div>
 
+          {/* Lecture Videos */}
           {selectedChapter.lectures.map((lec) => (
             <div key={lec.id} className="lecture-card">
               <h3>{lec.title}</h3>
@@ -130,7 +134,7 @@ function App() {
             </div>
           ))}
 
-          <button onClick={() => setSelectedChapter(null)} className="back-btn">🔙 Back to Chapters</button>
+          <button onClick={() => setSelectedChapter(null)}>🔙 Back to Chapters</button>
         </div>
       )}
     </div>
