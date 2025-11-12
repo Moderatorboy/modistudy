@@ -7,12 +7,12 @@ import ChapterList from './components/ChapterList';
 import ContentTabs from './components/ContentTabs';
 import VideoPlayer from './components/VideoPlayer';
 
-// ✅ Updated imports — use new data files
-import { batches as class11 } from './data/class11';
-import { batches as class12 } from './data/class12';
+// ✅ Correct imports
+import { class11 } from './data/class11';
+import { class12 } from './data/class12';
 
-// ✅ Combine both into one array
-const batches = [...class11, ...class12];
+// ✅ Combine both batches in one array
+const batches = [class11, class12];
 
 export default function App() {
   const [selectedBatch, setSelectedBatch] = useState(null);
@@ -37,8 +37,8 @@ export default function App() {
     }
   }
 
-  // 🔍 simple search filter on batch name / class / sir
-  const filtered = batches.filter(b => {
+  // 🔍 Simple search filter
+  const filtered = batches.filter((b) => {
     if (!q) return true;
     const s = q.toLowerCase();
     return (
@@ -54,13 +54,13 @@ export default function App() {
       <SearchBar value={q} onChange={setQ} />
 
       {!selectedBatch && (
-        <BatchGrid batches={filtered} onSelect={b => setSelectedBatch(b)} />
+        <BatchGrid batches={filtered} onSelect={(b) => setSelectedBatch(b)} />
       )}
 
       {selectedBatch && !selectedSubject && (
         <SubjectList
           batch={selectedBatch}
-          onSelect={s => setSelectedSubject(s)}
+          onSelect={(s) => setSelectedSubject(s)}
           onBack={() => reset('batch')}
         />
       )}
@@ -68,7 +68,7 @@ export default function App() {
       {selectedSubject && !selectedChapter && (
         <ChapterList
           subject={selectedSubject}
-          onSelect={c => setSelectedChapter(c)}
+          onSelect={(c) => setSelectedChapter(c)}
           onBack={() => reset('subject')}
         />
       )}
@@ -76,7 +76,7 @@ export default function App() {
       {selectedChapter && !selectedVideo && (
         <ContentTabs
           chapter={selectedChapter}
-          onSelectVideo={v => setSelectedVideo(v)}
+          onSelectVideo={(v) => setSelectedVideo(v)}
           onBack={() => reset('chapter')}
         />
       )}
