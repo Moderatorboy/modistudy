@@ -1,119 +1,276 @@
+/* 🌈 MODESTUDY PREMIUM THEME */
+
+/* 🎨 Colors */
+:root {
+  --navy-1: #001a33;
+  --navy-2: #002b55;
+  --navy-3: #003d80;
+  --accent-cyan: #00eaff;
+  --accent-indigo: #7c3aed;
+  --accent-pink: #ff6bcb;
+  --muted-light: rgba(255, 255, 255, 0.88);
+  --glass: rgba(255, 255, 255, 0.03);
+}
+
+/* 🔮 Background Dark (Premium Navy) */
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #0e0e12;
-  color: white;
   margin: 0;
+  min-height: 100vh;
+  font-family: "Inter", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  color: var(--muted-light);
+  background: radial-gradient(
+    circle at 10% 10%,
+    var(--navy-1) 0%,
+    var(--navy-2) 40%,
+    var(--navy-3) 100%
+  );
+  background-size: 300% 300%;
+  animation: bgShift 12s linear infinite;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+@keyframes bgShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ☀️ Light Mode (White + Pink) */
+body.alt-theme {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7fb 70%);
+  color: #111827;
+  transition: background 0.45s ease, color 0.45s ease;
+}
+body.alt-theme .card {
+  background: linear-gradient(180deg, #ffffff, #fff6fb);
+  color: #111827;
+  border: 1px solid rgba(10, 10, 10, 0.04);
+  box-shadow: 0 10px 30px rgba(10, 20, 40, 0.08);
+}
+body.alt-theme .theme-toggle {
+  background: linear-gradient(90deg, #ff7bbf, #ffb3da);
+  color: #111;
+  box-shadow: 0 6px 28px rgba(255, 123, 191, 0.2);
+}
+
+/* 🌟 Modestudy Title */
+.hero {
   text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
-
-.app-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-}
-
-.logo {
-  font-size: 2rem;
-  background: linear-gradient(90deg, #ff69b4, #ffa07a);
+h1.logo {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: linear-gradient(90deg, #00eaff, #7c3aed, #ff6bcb);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
-  letter-spacing: 2px;
+  color: transparent;
+  animation: hueRotate 6s linear infinite, floaty 5s ease-in-out infinite alternate;
+  text-shadow: 0 0 28px rgba(6, 182, 212, 0.25);
+}
+@keyframes hueRotate {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+@keyframes floaty {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
 }
 
-.search-bar {
-  margin-top: 0.5rem;
-  padding: 0.6rem 1rem;
-  width: 80%;
-  border-radius: 25px;
-  border: none;
-  outline: none;
-  background: #1c1c24;
-  color: white;
-}
-
-.back-btn {
-  margin: 10px;
-  background: #222;
+/* 🌗 Theme Toggle Button */
+.theme-toggle {
+  display: block;
+  margin: 16px auto;
+  background: linear-gradient(90deg, var(--accent-indigo), var(--accent-cyan));
   color: #fff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+  transition: transform 0.2s, box-shadow 0.4s;
+}
+.theme-toggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 26px rgba(6, 182, 212, 0.6);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+/* 🔍 Search Box */
+.search-box {
   width: 90%;
-  margin: auto;
-  padding-top: 1rem;
-}
-
-.card {
-  background: #1a1a1f;
-  padding: 1rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.card:hover {
-  background: #292933;
-}
-.card img {
-  width: 100%;
-  border-radius: 12px;
-}
-.resources a {
-  color: #ff91a4;
-  margin: 0 10px;
-  text-decoration: none;
-}
-.progress-bar {
-  background: #2e2e38;
-  border-radius: 10px;
-  height: 8px;
-  margin: 10px auto;
-  width: 80%;
-  overflow: hidden;
-}
-.fill {
-  background: linear-gradient(90deg, #ff69b4, #ffa07a);
-  height: 100%;
-  transition: width 0.3s ease;
-}
-.lecture-card {
-  background: #1c1c22;
-  border-radius: 10px;
-  margin: 10px auto;
-  padding: 10px;
-  width: 80%;
-  text-align: left;
-}
-.lecture-row {
+  max-width: 760px;
+  margin: 20px auto;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   gap: 10px;
+  box-shadow: 0 0 18px rgba(6, 182, 212, 0.1);
 }
-.lecture-row button {
+.search-box input {
   flex: 1;
-  background: none;
-  color: white;
+  background: transparent;
   border: none;
-  text-align: left;
-  cursor: pointer;
+  outline: none;
+  color: inherit;
+  font-size: 16px;
 }
-.quote {
-  font-size: 0.8rem;
-  color: #bdbdbd;
-  margin-left: 30px;
-}
-.player iframe {
+
+/* 🧱 Grid Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
   width: 90%;
-  height: 500px;
+  max-width: 1100px;
+  margin: 0 auto 60px;
+}
+.card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  box-shadow: 0 10px 40px rgba(8, 20, 43, 0.8), 0 0 15px var(--accent-indigo);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 14px 50px rgba(6, 182, 212, 0.6),
+    0 0 25px var(--accent-cyan);
+}
+
+/* 🖼 Batch Image — no crop, premium glow */
+.card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  filter: brightness(0.9);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  transition: transform 0.6s ease, filter 0.6s ease, box-shadow 0.6s ease;
+}
+.card:hover img {
+  transform: scale(1.06);
+  filter: brightness(1);
+  box-shadow: 0 0 35px rgba(0, 234, 255, 0.4),
+    0 0 55px rgba(124, 58, 237, 0.3);
+}
+
+/* ✨ Batch name gradient */
+.meta .name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  background: linear-gradient(90deg, #00eaff, #ff6bcb);
+  -webkit-background-clip: text;
+  color: transparent;
+  transition: 0.4s;
+}
+.card:hover .meta .name {
+  background: linear-gradient(90deg, #ff6bcb, #00eaff);
+  filter: drop-shadow(0 0 6px rgba(255, 107, 203, 0.6));
+}
+.meta .sub {
+  color: var(--muted-light);
+  margin-top: 6px;
+  font-size: 0.88rem;
+}
+
+/* 📘 Chapter / Lecture Buttons */
+.list button {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: inherit;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s;
+  width: 100%;
+}
+.list button:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(124, 58, 237, 0.3),
+    rgba(6, 182, 212, 0.3)
+  );
+  transform: scale(1.02);
+  box-shadow: 0 0 18px rgba(124, 58, 237, 0.3);
+}
+
+/* 📺 Video Embed */
+.embed iframe {
+  width: 100%;
+  height: 62vh;
+  border-radius: 14px;
   border: none;
-  border-radius: 12px;
-  margin-top: 1rem;
+  box-shadow: 0 0 40px rgba(6, 182, 212, 0.25);
+}
+
+/* ✨ Notes / DPP / DPP Video */
+.resources {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 20px 0;
+}
+.resources a {
+  text-decoration: none;
+  background: linear-gradient(45deg, #6a00f4, #ff007a);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.3s;
+  box-shadow: 0 0 20px rgba(255, 0, 150, 0.4);
+}
+.resources a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+}
+
+/* 📱 Responsive */
+@media (max-width: 900px) {
+  h1.logo {
+    font-size: 40px;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  .embed iframe {
+    height: 48vh;
+  }
 }
