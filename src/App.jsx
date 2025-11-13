@@ -1,144 +1,168 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { class11 } from "./data/class11";
 import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
-function App() {
-  const [darkTheme, setDarkTheme] = useState(true);
-  const [search, setSearch] = useState("");
+const quotes = [
+  "Consistency beats talent.",
+  "Small steps every day.",
+  "Keep going, you’re doing great!",
+  "Focus on progress, not perfection.",
+  "Discipline > Motivation.",
+  "Every expert was once a beginner.",
+];
+
+export default function App() {
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
+  const [completed, setCompleted] = useState(
+    JSON.parse(localStorage.getItem("completedLectures") || "[]")
+  );
+  const [search, setSearch] = useState("");
 
-  const toggleTheme = () => {
-    setDarkTheme(!darkTheme);
-    document.body.classList.toggle("alt-theme", !darkTheme);
+  const allBatches = [class11, class12];
+
+  const toggleComplete = (id) => {
+    let updated = completed.includes(id)
+      ? completed.filter((lecId) => lecId !== id)
+      : [...completed, id];
+    setCompleted(updated);
+    localStorage.setItem("completedLectures", JSON.stringify(updated));
   };
 
-  const batches = [class11, class12];
-
-  const filteredBatches = batches.filter(b =>
-    b.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const goBack = () => {
+    if (selectedLecture) setSelectedLecture(null);
+    else if (selectedChapter) setSelectedChapter(null);
+    else if (selectedSubject) setSelectedSubject(null);
+    else if (selectedBatch) setSelectedBatch(null);
+  };
 
   return (
-    <div>
+    <div className="app-container">
       {/* 🌟 Header */}
-      <div className="hero">
-        <h1 className="logo">Modestudy</h1>
-      </div>
-
-      {/* 🎚 Theme Toggle */}
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {darkTheme ? "Switch to Light Mode 🌤" : "Switch to Dark Mode 🌙"}
-      </button>
-
-      {/* 🔍 Search */}
-      <div className="search-box">
+      <header className="app-header">
+        <h1 className="logo">MODESTUDY</h1>
         <input
           type="text"
-          placeholder="Search batches..."
+          placeholder="Search chapters or lectures..."
+          className="search-bar"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value.toLowerCase())}
         />
-      </div>
+      </header>
 
-      {/* 🔙 Navigation */}
-      <div style={{ width: "90%", margin: "0 auto 20px" }}>
-        {selectedLecture && (
-          <button className="theme-toggle" onClick={() => setSelectedLecture(null)}>🔙 Back to Chapters</button>
-        )}
-        {!selectedLecture && selectedChapter && (
-          <button className="theme-toggle" onClick={() => setSelectedChapter(null)}>🔙 Back to Subjects</button>
-        )}
-        {!selectedChapter && selectedSubject && (
-          <button className="theme-toggle" onClick={() => setSelectedSubject(null)}>🔙 Back to Batches</button>
-        )}
-        {!selectedSubject && selectedBatch && (
-          <button className="theme-toggle" onClick={() => setSelectedBatch(null)}>🔙 Back to Home</button>
-        )}
-      </div>
+      {/* 🔙 Back Navigation */}
+      {(selectedBatch || selectedSubject || selectedChapter || selectedLecture) && (
+        <button className="back-btn" onClick={goBack}>
+          ⬅ Back
+        </button>
+      )}
 
-      {/* 🧱 Main Display */}
-      {!selectedBatch ? (
+      {/* 🧩 View Sections */}
+      {!selectedBatch && (
         <div className="grid">
-          {filteredBatches.map((batch) => (
-            <div
-              key={batch.id}
-              className="card"
-              onClick={() => setSelectedBatch(batch)}
-            >
-              <img src={batch.img} alt={batch.name} />
-              <div className="meta">
-                <div className="name">{batch.name}</div>
-                <div className="sub">Tap to open subjects</div>
-              </div>
+          {allBatches.map((b) => (
+            <div key={b.id} className="card" onClick={() => setSelectedBatch(b)}>
+              <img src={b.img} alt={b.name} />
+              <h2>{b.name}</h2>
             </div>
           ))}
         </div>
-      ) : !selectedSubject ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
-          <h2>{selectedBatch.name}</h2>
-          {selectedBatch.subjects.map((sub) => (
-            <button key={sub.id} onClick={() => setSelectedSubject(sub)}>
-              {sub.name}
-            </button>
+      )}
+
+      {selectedBatch && !selectedSubject && (
+        <div className="grid">
+          {selectedBatch.subjects.map((s) => (
+            <div key={s.id} className="card" onClick={() => setSelectedSubject(s)}>
+              <h3>{s.name}</h3>
+            </div>
           ))}
         </div>
-      ) : !selectedChapter ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
-          <h2>{selectedSubject.name}</h2>
-          {selectedSubject.chapters.map((ch) => (
-            <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
-              {ch.name}
-            </button>
-          ))}
+      )}
+
+      {selectedSubject && !selectedChapter && (
+        <div className="grid">
+          {selectedSubject.chapters
+            .filter((c) => c.name.toLowerCase().includes(search))
+            .map((c) => (
+              <div key={c.id} className="card" onClick={() => setSelectedChapter(c)}>
+                <h3>{c.name}</h3>
+              </div>
+            ))}
         </div>
-      ) : !selectedLecture ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
+      )}
+
+      {/* 📚 Chapter View */}
+      {selectedChapter && !selectedLecture && (
+        <div className="chapter-view">
           <h2>{selectedChapter.name}</h2>
 
-          {/* 📘 Resources Section */}
+          {/* 📊 Progress */}
+          <div className="progress-bar">
+            <div
+              className="fill"
+              style={{
+                width: `${
+                  (selectedChapter.lectures.filter((l) => completed.includes(l.id)).length /
+                    selectedChapter.lectures.length) *
+                  100
+                }%`,
+              }}
+            ></div>
+          </div>
+          <p>
+            {
+              Math.round(
+                (selectedChapter.lectures.filter((l) => completed.includes(l.id)).length /
+                  selectedChapter.lectures.length) *
+                  100
+              )
+            }
+            % Completed
+          </p>
+
+          {/* 📘 Notes / DPP / etc */}
           <div className="resources">
-            {selectedChapter.notes && (
-              <a href={selectedChapter.notes} target="_blank" rel="noreferrer">📒 Notes</a>
-            )}
-            {selectedChapter.sheet && (
-              <a href={selectedChapter.sheet} target="_blank" rel="noreferrer">📘 Sheet</a>
-            )}
-            {selectedChapter.dpp && (
-              <a href={selectedChapter.dpp} target="_blank" rel="noreferrer">📄 DPP (PDF)</a>
-            )}
-            {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo} target="_blank" rel="noreferrer">🎥 DPP Video</a>
-            )}
+            {selectedChapter.notes && <a href={selectedChapter.notes}>📒 Notes</a>}
+            {selectedChapter.sheet && <a href={selectedChapter.sheet}>📘 Sheet</a>}
+            {selectedChapter.dpp && <a href={selectedChapter.dpp}>📄 DPP</a>}
+            {selectedChapter.dppVideo && <a href={selectedChapter.dppVideo}>🎥 DPP Video</a>}
           </div>
 
-          {/* 📺 Lecture Buttons */}
-          {selectedChapter.lectures.map((lec) => (
-            <button key={lec.id} onClick={() => setSelectedLecture(lec)}>
-              {lec.title}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div style={{ width: "90%", margin: "0 auto" }}>
-          <h2>{selectedLecture.title}</h2>
-          <div className="embed">
-            <iframe
-              src={selectedLecture.url.replace("?pub=4no3cq", "")}
-              title={selectedLecture.title}
-              allow="autoplay; fullscreen; encrypted-media"
-              sandbox="allow-same-origin allow-scripts allow-presentation"
-              referrerPolicy="no-referrer"
-              allowFullScreen
-            ></iframe>
+          {/* 🎥 Lectures */}
+          <div className="lecture-list">
+            {selectedChapter.lectures.map((lec) => (
+              <div key={lec.id} className="lecture-card">
+                <div className="lecture-row">
+                  <input
+                    type="checkbox"
+                    checked={completed.includes(lec.id)}
+                    onChange={() => toggleComplete(lec.id)}
+                  />
+                  <button onClick={() => setSelectedLecture(lec)}>{lec.title}</button>
+                </div>
+                <p className="quote">
+                  {quotes[Math.floor(Math.random() * quotes.length)]}
+                </p>
+              </div>
+            ))}
           </div>
+        </div>
+      )}
+
+      {/* ▶️ Lecture Player */}
+      {selectedLecture && (
+        <div className="player">
+          <h3>{selectedLecture.title}</h3>
+          <iframe
+            src={selectedLecture.url || selectedLecture.embed}
+            allowFullScreen
+            title={selectedLecture.title}
+          ></iframe>
         </div>
       )}
     </div>
   );
 }
-
-export default App;
