@@ -1,135 +1,119 @@
 body {
-  margin: 0;
-  background: linear-gradient(135deg, #0a0014, #140033, #1e0059);
+  font-family: 'Poppins', sans-serif;
+  background: #0e0e12;
   color: white;
-  font-family: "Poppins", sans-serif;
+  margin: 0;
   text-align: center;
-  overflow-x: hidden;
 }
 
-.app-title {
-  font-size: 2.5rem;
-  background: linear-gradient(90deg, #ff00ff, #00ffff, #ff9900);
+.app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo {
+  font-size: 2rem;
+  background: linear-gradient(90deg, #ff69b4, #ffa07a);
   -webkit-background-clip: text;
-  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-weight: 700;
-  margin: 1rem 0;
   letter-spacing: 2px;
-  animation: glow 3s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #ff00ff; }
-  to { text-shadow: 0 0 20px #00ffff; }
 }
 
 .search-bar {
-  width: 60%;
-  padding: 0.8rem;
-  border-radius: 2rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1rem;
+  width: 80%;
+  border-radius: 25px;
   border: none;
   outline: none;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  background: rgba(255,255,255,0.1);
+  background: #1c1c24;
   color: white;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
 }
 
-.search-bar::placeholder {
-  color: rgba(255,255,255,0.6);
-}
-
-.search-bar:focus {
-  background: rgba(255,255,255,0.2);
+.back-btn {
+  margin: 10px;
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 90%;
+  margin: auto;
+  padding-top: 1rem;
 }
 
 .card {
-  background: rgba(255,255,255,0.08);
-  border-radius: 1rem;
+  background: #1a1a1f;
   padding: 1rem;
-  transition: all 0.3s;
+  border-radius: 12px;
   cursor: pointer;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 15px rgba(255,255,255,0.05);
+  transition: 0.3s;
 }
-
 .card:hover {
-  background: rgba(255,255,255,0.2);
-  transform: translateY(-4px);
+  background: #292933;
 }
-
-.card-img {
+.card img {
   width: 100%;
-  border-radius: 0.8rem;
-  margin-bottom: 0.5rem;
+  border-radius: 12px;
 }
-
-.back-btn {
-  margin: 1rem;
-  padding: 0.5rem 1.2rem;
-  border-radius: 1rem;
-  border: none;
-  font-size: 1rem;
-  color: #fff;
-  background: linear-gradient(90deg, #ff0080, #7928ca);
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.back-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-}
-
-.resources {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-
 .resources a {
-  background: rgba(255,255,255,0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 1rem;
-  color: #fff;
+  color: #ff91a4;
+  margin: 0 10px;
   text-decoration: none;
-  transition: 0.3s;
 }
-
-.resources a:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-.video-section {
-  text-align: center;
-  padding: 1rem;
-}
-
-.video-container {
-  position: relative;
-  width: 90%;
-  max-width: 900px;
-  margin: 1rem auto;
-  aspect-ratio: 16/9;
-  border-radius: 1rem;
+.progress-bar {
+  background: #2e2e38;
+  border-radius: 10px;
+  height: 8px;
+  margin: 10px auto;
+  width: 80%;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(255,255,255,0.1);
 }
-
-.video-container iframe {
-  width: 100%;
+.fill {
+  background: linear-gradient(90deg, #ff69b4, #ffa07a);
   height: 100%;
+  transition: width 0.3s ease;
+}
+.lecture-card {
+  background: #1c1c22;
+  border-radius: 10px;
+  margin: 10px auto;
+  padding: 10px;
+  width: 80%;
+  text-align: left;
+}
+.lecture-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lecture-row button {
+  flex: 1;
+  background: none;
+  color: white;
   border: none;
-  border-radius: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+.quote {
+  font-size: 0.8rem;
+  color: #bdbdbd;
+  margin-left: 30px;
+}
+.player iframe {
+  width: 90%;
+  height: 500px;
+  border: none;
+  border-radius: 12px;
+  margin-top: 1rem;
 }
