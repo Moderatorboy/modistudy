@@ -44,7 +44,7 @@ export const class11 = {
           dpp: "https://example.com/dpp_lawsmotion.pdf",
           dppVideo: "https://odysee.com/$/embed/abc123",
           lectures: [
-            { id: "l3", title: "Lecture 3 — Force", embed: "https://odysee.com/$/embed/xyz123" },
+            { id: "l3", title: "Lecture 3 — Force", url: "https://odysee.com/$/embed/xyz123" },
           ],
         },
       ],
