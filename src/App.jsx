@@ -19,8 +19,8 @@ function App() {
 
   // ALL BATCHES
   const batches = [
-    { ...class11, img: "/images/class11.png" },
-    { ...class12, img: "/images/class12.png" },
+    { ...class11, img: "/images/batchA.png" },
+    { ...class12, img: "/images/batchB.jpg" },
   ];
 
   // UNIVERSAL SEARCH SYSTEM
