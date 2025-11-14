@@ -6,6 +6,7 @@ import "./styles/theme.css";
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
   const [search, setSearch] = useState("");
+
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
@@ -16,58 +17,96 @@ function App() {
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
-  const batches = [class11, class12];
+  // ALL BATCHES
+  const batches = [
+    { ...class11, img: "/images/class11.png" },
+    { ...class12, img: "/images/class12.png" },
+  ];
 
-  const filteredBatches = batches.filter(b =>
-    b.name.toLowerCase().includes(search.toLowerCase())
+  // UNIVERSAL SEARCH SYSTEM
+  const filterText = search.toLowerCase();
+
+  // 1) Batch Search
+  const filteredBatches = batches.filter((b) =>
+    b.name.toLowerCase().includes(filterText)
   );
+
+  // 2) Subject Search
+  const filteredSubjects =
+    selectedBatch?.subjects?.filter((s) =>
+      s.name.toLowerCase().includes(filterText)
+    ) || [];
+
+  // 3) Chapter Search
+  const filteredChapters =
+    selectedSubject?.chapters?.filter((c) =>
+      c.name.toLowerCase().includes(filterText)
+    ) || [];
+
+  // PAGE UI LOGIC
+  const showBatches = !selectedBatch;
+  const showSubjects = selectedBatch && !selectedSubject;
+  const showChapters = selectedSubject && !selectedChapter;
+  const showLectures = selectedChapter && !selectedLecture;
+  const showLectureVideo = selectedLecture;
 
   return (
     <div>
-      {/* 🌟 Header */}
+      {/* HEADER */}
       <div className="hero">
         <h1 className="logo">Modestudy</h1>
       </div>
 
-      {/* 🎚 Theme Toggle */}
+      {/* THEME TOGGLE */}
       <button className="theme-toggle" onClick={toggleTheme}>
         {darkTheme ? "Switch to Light Mode 🌤" : "Switch to Dark Mode 🌙"}
       </button>
 
-      {/* 🔍 Search */}
+      {/* SEARCH BAR */}
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search batches..."
+          placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* 🔙 Navigation */}
+      {/* BACK BUTTONS */}
       <div style={{ width: "90%", margin: "0 auto 20px" }}>
-        {selectedLecture && (
-          <button className="theme-toggle" onClick={() => setSelectedLecture(null)}>🔙 Back to Chapters</button>
+        {showLectureVideo && (
+          <button className="theme-toggle" onClick={() => setSelectedLecture(null)}>
+            🔙 Back to Lectures
+          </button>
         )}
-        {!selectedLecture && selectedChapter && (
-          <button className="theme-toggle" onClick={() => setSelectedChapter(null)}>🔙 Back to Subjects</button>
+        {showLectures && (
+          <button className="theme-toggle" onClick={() => setSelectedChapter(null)}>
+            🔙 Back to Chapters
+          </button>
         )}
-        {!selectedChapter && selectedSubject && (
-          <button className="theme-toggle" onClick={() => setSelectedSubject(null)}>🔙 Back to Batches</button>
+        {showChapters && (
+          <button className="theme-toggle" onClick={() => setSelectedSubject(null)}>
+            🔙 Back to Subjects
+          </button>
         )}
-        {!selectedSubject && selectedBatch && (
-          <button className="theme-toggle" onClick={() => setSelectedBatch(null)}>🔙 Back to Home</button>
+        {showSubjects && (
+          <button className="theme-toggle" onClick={() => setSelectedBatch(null)}>
+            🔙 Back to Home
+          </button>
         )}
       </div>
 
-      {/* 🧱 Main Display */}
-      {!selectedBatch ? (
+      {/* MAIN SCREEN */}
+      {showBatches && (
         <div className="grid">
           {filteredBatches.map((batch) => (
             <div
               key={batch.id}
               className="card"
-              onClick={() => setSelectedBatch(batch)}
+              onClick={() => {
+                setSelectedBatch(batch);
+                setSearch("");
+              }}
             >
               <img src={batch.img} alt={batch.name} />
               <div className="meta">
@@ -77,54 +116,85 @@ function App() {
             </div>
           ))}
         </div>
-      ) : !selectedSubject ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
+      )}
+
+      {showSubjects && (
+        <div className="list">
           <h2>{selectedBatch.name}</h2>
-          {selectedBatch.subjects.map((sub) => (
-            <button key={sub.id} onClick={() => setSelectedSubject(sub)}>
+
+          {filteredSubjects.map((sub) => (
+            <button
+              key={sub.id}
+              onClick={() => {
+                setSelectedSubject(sub);
+                setSearch("");
+              }}
+            >
               {sub.name}
             </button>
           ))}
         </div>
-      ) : !selectedChapter ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
+      )}
+
+      {showChapters && (
+        <div className="list">
           <h2>{selectedSubject.name}</h2>
-          {selectedSubject.chapters.map((ch) => (
-            <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
+
+          {filteredChapters.map((ch) => (
+            <button
+              key={ch.id}
+              onClick={() => {
+                setSelectedChapter(ch);
+                setSearch("");
+              }}
+            >
               {ch.name}
             </button>
           ))}
         </div>
-      ) : !selectedLecture ? (
-        <div className="list" style={{ width: "90%", margin: "0 auto" }}>
+      )}
+
+      {showLectures && (
+        <div className="list">
           <h2>{selectedChapter.name}</h2>
 
-          {/* 📘 Resources Section */}
+          {/* RESOURCES */}
           <div className="resources">
             {selectedChapter.notes && (
-              <a href={selectedChapter.notes} target="_blank" rel="noreferrer">📒 Notes</a>
+              <a href={selectedChapter.notes} target="_blank" rel="noreferrer">
+                📒 Notes
+              </a>
             )}
             {selectedChapter.sheet && (
-              <a href={selectedChapter.sheet} target="_blank" rel="noreferrer">📘 Sheet</a>
+              <a href={selectedChapter.sheet} target="_blank" rel="noreferrer">
+                📘 Sheet
+              </a>
             )}
             {selectedChapter.dpp && (
-              <a href={selectedChapter.dpp} target="_blank" rel="noreferrer">📄 DPP (PDF)</a>
+              <a href={selectedChapter.dpp} target="_blank" rel="noreferrer">
+                📄 DPP
+              </a>
             )}
             {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo} target="_blank" rel="noreferrer">🎥 DPP Video</a>
+              <a href={selectedChapter.dppVideo} target="_blank" rel="noreferrer">
+                🎥 DPP Video
+              </a>
             )}
           </div>
 
-          {/* 📺 Lecture Buttons */}
+          {/* LECTURES */}
           {selectedChapter.lectures.map((lec) => (
             <button key={lec.id} onClick={() => setSelectedLecture(lec)}>
               {lec.title}
             </button>
           ))}
         </div>
-      ) : (
+      )}
+
+      {showLectureVideo && (
         <div style={{ width: "90%", margin: "0 auto" }}>
           <h2>{selectedLecture.title}</h2>
+
           <div className="embed">
             <iframe
               src={selectedLecture.url.replace("?pub=4no3cq", "")}
