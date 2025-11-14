@@ -4,205 +4,161 @@ import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
 function App() {
-  const batches = [class11, class12];
-
   const [darkTheme, setDarkTheme] = useState(true);
   const [search, setSearch] = useState("");
-
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
-
   const [progress, setProgress] = useState({});
-  const [quote, setQuote] = useState("");
+  const [showOverlay, setShowOverlay] = useState(false);
 
-  const quotes = [
-    "Success is no accident!",
-    "Hard work beats talent!",
-    "Push yourself, no one else will!",
-    "Small steps every day!",
-    "Consistency is power!",
-    "Focus = Success!"
-  ];
+  const batches = [class11, class12];
 
+  // THEME
   useEffect(() => {
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-  }, [selectedLecture]);
-
-  const toggleTheme = () => {
-    setDarkTheme(!darkTheme);
     document.body.classList.toggle("alt-theme", !darkTheme);
-  };
+  }, [darkTheme]);
 
-  const toggleComplete = (lecId) => {
-    const updated = { ...progress };
-    updated[lecId] = !updated[lecId];
-    setProgress(updated);
-
-    localStorage.setItem("progress", JSON.stringify(updated));
-  };
-
-  useEffect(() => {
-    const saved = localStorage.getItem("progress");
-    if (saved) setProgress(JSON.parse(saved));
-  }, []);
-
-  const filteredBatches = batches.filter(b =>
+  const filteredBatches = batches.filter((b) =>
     b.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const calcPercentage = () => {
-    if (!selectedChapter) return 0;
+  // WATCH PROGRESS MARK
+  const toggleWatch = (lecId) => {
+    setProgress((p) => {
+      const updated = { ...p, [lecId]: !p[lecId] };
+      localStorage.setItem("watchProgress", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
-    const total = selectedChapter.lectures.length;
-    const done = selectedChapter.lectures.filter(l => progress[l.id]).length;
+  useEffect(() => {
+    const loaded = JSON.parse(localStorage.getItem("watchProgress") || "{}");
+    setProgress(loaded);
+  }, []);
 
-    return Math.round((done / total) * 100);
+  // WHEN VIDEO LOADS → auto hide recommendations
+  const onVideoLoad = () => {
+    setTimeout(() => {
+      setShowOverlay(true);
+    }, 1000);
   };
 
   return (
     <div>
-      {/* 🔥 Premium Header */}
-      <div className="hero">
+      {/* HEADER */}
+      <div className="top-header">
         <h1 className="logo">Modestudy</h1>
+
+        {/* Toggle */}
+        <button className="theme-toggle" onClick={() => setDarkTheme(!darkTheme)}>
+          {darkTheme ? "🌤" : "🌙"}
+        </button>
       </div>
 
-      {/* Theme Toggle */}
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {darkTheme ? "Light Mode 🌤" : "Dark Mode 🌙"}
-      </button>
-
-      {/* Search */}
+      {/* SEARCH */}
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search batches..."
+          placeholder="Search batches, subjects…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* Navigation */}
-      <div className="nav-controls">
+      {/* BACK NAVIGATION */}
+      <div className="nav-back">
         {selectedLecture && (
-          <button onClick={() => setSelectedLecture(null)}>🔙 Back</button>
+          <button onClick={() => setSelectedLecture(null)}>← Back to Lectures</button>
         )}
         {!selectedLecture && selectedChapter && (
-          <button onClick={() => setSelectedChapter(null)}>🔙 Back</button>
+          <button onClick={() => setSelectedChapter(null)}>← Back to Subjects</button>
         )}
         {!selectedChapter && selectedSubject && (
-          <button onClick={() => setSelectedSubject(null)}>🔙 Back</button>
+          <button onClick={() => setSelectedSubject(null)}>← Back to Batches</button>
         )}
         {!selectedSubject && selectedBatch && (
-          <button onClick={() => setSelectedBatch(null)}>🔙 Home</button>
+          <button onClick={() => setSelectedBatch(null)}>← Home</button>
         )}
       </div>
 
-      {/* UI Switch */}
+      {/* MAIN UI */}
       {!selectedBatch ? (
-        /* ------------------------- BATCHES ---------------------------- */
+        // ==== BATCH LIST ====
         <div className="grid">
           {filteredBatches.map((batch) => (
-            <div
-              key={batch.id}
-              className="card"
-              onClick={() => setSelectedBatch(batch)}
-            >
-              <div className="img-wrap">
-                <img src={batch.img} alt={batch.name} />
-              </div>
+            <div key={batch.id} className="card" onClick={() => setSelectedBatch(batch)}>
+              <img className="card-img" src={batch.img} alt={batch.name} />
               <div className="meta">
                 <div className="name">{batch.name}</div>
-                <div className="sub">Open Subjects →</div>
+                <div className="sub">Tap to view subjects</div>
               </div>
             </div>
           ))}
         </div>
       ) : !selectedSubject ? (
-        /* ------------------------- SUBJECTS ---------------------------- */
+        // ==== SUBJECT LIST ====
         <div className="list">
           <h2>{selectedBatch.name}</h2>
-          {selectedBatch.subjects.map((sub) => (
-            <button key={sub.id} onClick={() => setSelectedSubject(sub)}>
-              {sub.name}
+          {selectedBatch.subjects.map((s) => (
+            <button key={s.id} className="item-btn" onClick={() => setSelectedSubject(s)}>
+              {s.name}
             </button>
           ))}
         </div>
       ) : !selectedChapter ? (
-        /* ------------------------- CHAPTERS ---------------------------- */
+        // ==== CHAPTER LIST ====
         <div className="list">
           <h2>{selectedSubject.name}</h2>
           {selectedSubject.chapters.map((ch) => (
-            <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
+            <button key={ch.id} className="item-btn" onClick={() => setSelectedChapter(ch)}>
               {ch.name}
             </button>
           ))}
         </div>
       ) : !selectedLecture ? (
-        /* ------------------------- LECTURES ---------------------------- */
+        // ==== LECTURE LIST ====
         <div className="list">
           <h2>{selectedChapter.name}</h2>
 
-          <div className="progress-box">
-            Progress: {calcPercentage()}%
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: calcPercentage() + "%" }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Resources */}
+          {/* RESOURCES */}
           <div className="resources">
-            {selectedChapter.notes && (
-              <a href={selectedChapter.notes} target="_blank">📒 Notes</a>
-            )}
-            {selectedChapter.sheet && (
-              <a href={selectedChapter.sheet} target="_blank">📘 Sheet</a>
-            )}
-            {selectedChapter.dpp && (
-              <a href={selectedChapter.dpp} target="_blank">📄 DPP</a>
-            )}
-            {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo} target="_blank">🎥 DPP Video</a>
-            )}
+            {selectedChapter.notes && <a href={selectedChapter.notes} target="_blank">📒 Notes</a>}
+            {selectedChapter.sheet && <a href={selectedChapter.sheet} target="_blank">📘 Sheet</a>}
+            {selectedChapter.dpp && <a href={selectedChapter.dpp} target="_blank">📄 DPP</a>}
+            {selectedChapter.dppVideo && <a href={selectedChapter.dppVideo} target="_blank">🎥 DPP Video</a>}
           </div>
 
+          {/* LECTURES */}
           {selectedChapter.lectures.map((lec) => (
-            <button
-              key={lec.id}
-              className="lec-btn"
-              onClick={() => setSelectedLecture(lec)}
-            >
+            <button key={lec.id} className="lecture-btn" onClick={() => setSelectedLecture(lec)}>
+              <span className="lec-title">{lec.title}</span>
               <input
                 type="checkbox"
                 checked={progress[lec.id] || false}
-                onChange={() => toggleComplete(lec.id)}
-                onClick={(e) => e.stopPropagation()}
+                onChange={() => toggleWatch(lec.id)}
               />
-              {lec.title}
             </button>
           ))}
         </div>
       ) : (
-        /* ------------------------- VIDEO ---------------------------- */
-        <div className="video-page">
+        // ==== VIDEO PLAYER ====
+        <div className="video-box">
           <h2>{selectedLecture.title}</h2>
 
-          <div className="embed">
+          <div className="player-wrapper">
             <iframe
-              src={selectedLecture.url + "&autoplay=1&mute=0"}
-              title={selectedLecture.title}
-              allow="autoplay; encrypted-media; fullscreen"
-              sandbox="allow-same-origin allow-scripts"
+              className="player"
+              src={selectedLecture.url}
+              onLoad={onVideoLoad}
+              allow="autoplay; fullscreen"
               allowFullScreen
             ></iframe>
-          </div>
 
-          {/* Motivational quote */}
-          <div className="quote-box">✨ {quote}</div>
+            {/* AUTO NO-RECOMMENDATION OVERLAY */}
+            {showOverlay && <div className="overlay-block"></div>}
+          </div>
         </div>
       )}
     </div>
