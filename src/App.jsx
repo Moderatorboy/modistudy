@@ -6,109 +6,102 @@ import "./styles/theme.css";
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
   const [search, setSearch] = useState("");
-
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
+
+  // NEW: completion tracker
+  const [completed, setCompleted] = useState({});
+
+  const quotes = [
+    "Success comes to those who keep moving.",
+    "Be stronger than your excuses.",
+    "Hard work beats talent.",
+    "Focus. Study. Win.",
+    "Don't stop until you're proud.",
+  ];
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
-  // ALL BATCHES
-  const batches = [
-    { ...class11, img: "/images/batchA.png" },
-    { ...class12, img: "/images/batchB.jpg" },
-  ];
+  const toggleComplete = (lecId) => {
+    setCompleted((old) => ({ ...old, [lecId]: !old[lecId] }));
+  };
 
-  // UNIVERSAL SEARCH SYSTEM
-  const filterText = search.toLowerCase();
+  const batches = [class11, class12];
 
-  // 1) Batch Search
   const filteredBatches = batches.filter((b) =>
-    b.name.toLowerCase().includes(filterText)
+    b.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 2) Subject Search
-  const filteredSubjects =
-    selectedBatch?.subjects?.filter((s) =>
-      s.name.toLowerCase().includes(filterText)
-    ) || [];
-
-  // 3) Chapter Search
-  const filteredChapters =
-    selectedSubject?.chapters?.filter((c) =>
-      c.name.toLowerCase().includes(filterText)
-    ) || [];
-
-  // PAGE UI LOGIC
-  const showBatches = !selectedBatch;
-  const showSubjects = selectedBatch && !selectedSubject;
-  const showChapters = selectedSubject && !selectedChapter;
-  const showLectures = selectedChapter && !selectedLecture;
-  const showLectureVideo = selectedLecture;
+  // Percentage calculation
+  const chapterLectures = selectedChapter?.lectures || [];
+  const completedCount = chapterLectures.filter((l) => completed[l.id]).length;
+  const percent =
+    chapterLectures.length > 0
+      ? Math.round((completedCount / chapterLectures.length) * 100)
+      : 0;
 
   return (
     <div>
-      {/* HEADER */}
+      {/* TOP HEADER */}
       <div className="hero">
         <h1 className="logo">Modestudy</h1>
-      </div>
 
-      {/* THEME TOGGLE */}
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {darkTheme ? "Switch to Light Mode 🌤" : "Switch to Dark Mode 🌙"}
-      </button>
+        {/* THEME BUTTON */}
+        <button className="theme-toggle small" onClick={toggleTheme}>
+          {darkTheme ? "Light 🌤" : "Dark 🌙"}
+        </button>
+      </div>
 
       {/* SEARCH BAR */}
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search batches, subjects, chapters..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* BACK BUTTONS */}
+      {/* Navigation */}
       <div style={{ width: "90%", margin: "0 auto 20px" }}>
-        {showLectureVideo && (
+        {selectedLecture && (
           <button className="theme-toggle" onClick={() => setSelectedLecture(null)}>
-            🔙 Back to Lectures
-          </button>
-        )}
-        {showLectures && (
-          <button className="theme-toggle" onClick={() => setSelectedChapter(null)}>
             🔙 Back to Chapters
           </button>
         )}
-        {showChapters && (
-          <button className="theme-toggle" onClick={() => setSelectedSubject(null)}>
+        {!selectedLecture && selectedChapter && (
+          <button className="theme-toggle" onClick={() => setSelectedChapter(null)}>
             🔙 Back to Subjects
           </button>
         )}
-        {showSubjects && (
+        {!selectedChapter && selectedSubject && (
+          <button className="theme-toggle" onClick={() => setSelectedSubject(null)}>
+            🔙 Back to Batches
+          </button>
+        )}
+        {!selectedSubject && selectedBatch && (
           <button className="theme-toggle" onClick={() => setSelectedBatch(null)}>
-            🔙 Back to Home
+            🔙 Back Home
           </button>
         )}
       </div>
 
-      {/* MAIN SCREEN */}
-      {showBatches && (
+      {/* MAIN UI */}
+      {!selectedBatch ? (
+        // BATCHES
         <div className="grid">
           {filteredBatches.map((batch) => (
             <div
               key={batch.id}
               className="card"
-              onClick={() => {
-                setSelectedBatch(batch);
-                setSearch("");
-              }}
+              onClick={() => setSelectedBatch(batch)}
             >
-              <img src={batch.img} alt={batch.name} />
+              <img src={batch.img} alt={batch.name} className="batch-img" />
               <div className="meta">
                 <div className="name">{batch.name}</div>
                 <div className="sub">Tap to open subjects</div>
@@ -116,88 +109,93 @@ function App() {
             </div>
           ))}
         </div>
-      )}
-
-      {showSubjects && (
+      ) : !selectedSubject ? (
+        // SUBJECTS
         <div className="list">
           <h2>{selectedBatch.name}</h2>
-
-          {filteredSubjects.map((sub) => (
-            <button
-              key={sub.id}
-              onClick={() => {
-                setSelectedSubject(sub);
-                setSearch("");
-              }}
-            >
+          {selectedBatch.subjects.map((sub) => (
+            <button key={sub.id} onClick={() => setSelectedSubject(sub)}>
               {sub.name}
             </button>
           ))}
         </div>
-      )}
-
-      {showChapters && (
+      ) : !selectedChapter ? (
+        // CHAPTERS
         <div className="list">
           <h2>{selectedSubject.name}</h2>
-
-          {filteredChapters.map((ch) => (
-            <button
-              key={ch.id}
-              onClick={() => {
-                setSelectedChapter(ch);
-                setSearch("");
-              }}
-            >
+          {selectedSubject.chapters.map((ch) => (
+            <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
               {ch.name}
             </button>
           ))}
         </div>
-      )}
-
-      {showLectures && (
+      ) : !selectedLecture ? (
+        // CHAPTER VIEW + Progress + Notes
         <div className="list">
           <h2>{selectedChapter.name}</h2>
 
-          {/* RESOURCES */}
+          {/* Resources */}
           <div className="resources">
             {selectedChapter.notes && (
-              <a href={selectedChapter.notes} target="_blank" rel="noreferrer">
+              <a href={selectedChapter.notes} target="_blank">
                 📒 Notes
               </a>
             )}
             {selectedChapter.sheet && (
-              <a href={selectedChapter.sheet} target="_blank" rel="noreferrer">
+              <a href={selectedChapter.sheet} target="_blank">
                 📘 Sheet
               </a>
             )}
             {selectedChapter.dpp && (
-              <a href={selectedChapter.dpp} target="_blank" rel="noreferrer">
-                📄 DPP
+              <a href={selectedChapter.dpp} target="_blank">
+                📄 DPP (PDF)
               </a>
             )}
             {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo} target="_blank" rel="noreferrer">
+              <a href={selectedChapter.dppVideo} target="_blank">
                 🎥 DPP Video
               </a>
             )}
           </div>
 
-          {/* LECTURES */}
+          {/* Progress Bar */}
+          <div className="progress-box">
+            <div className="progress-label">
+              Progress: {percent}% ({completedCount}/{chapterLectures.length})
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: percent + "%" }}></div>
+            </div>
+          </div>
+
+          {/* Lecture List */}
           {selectedChapter.lectures.map((lec) => (
-            <button key={lec.id} onClick={() => setSelectedLecture(lec)}>
-              {lec.title}
-            </button>
+            <div key={lec.id} className="lecture-item">
+              <label className="checkbox-row">
+                <input
+                  type="checkbox"
+                  checked={completed[lec.id] || false}
+                  onChange={() => toggleComplete(lec.id)}
+                />
+                <span onClick={() => setSelectedLecture(lec)} className="lec-title">
+                  {lec.title}
+                </span>
+              </label>
+
+              {/* Quote */}
+              <div className="quote">
+                {quotes[Math.floor(Math.random() * quotes.length)]}
+              </div>
+            </div>
           ))}
         </div>
-      )}
-
-      {showLectureVideo && (
-        <div style={{ width: "90%", margin: "0 auto" }}>
+      ) : (
+        // VIDEO PLAYER
+        <div className="video-box">
           <h2>{selectedLecture.title}</h2>
-
           <div className="embed">
             <iframe
-              src={selectedLecture.url.replace("?pub=4no3cq", "")}
+              src={selectedLecture.url}
               title={selectedLecture.title}
               allow="autoplay; fullscreen; encrypted-media"
               sandbox="allow-same-origin allow-scripts allow-presentation"
