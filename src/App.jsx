@@ -4,64 +4,76 @@ import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
 function App() {
+  const batches = [class11, class12];
+
   const [darkTheme, setDarkTheme] = useState(true);
   const [search, setSearch] = useState("");
+
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
 
-  const [videoEnded, setVideoEnded] = useState(false);
-  const [quotes] = useState([
-    "Success comes to those who work consistently.",
-    "Never stop learning, because life never stops teaching.",
-    "Hard work beats talent when talent doesn’t work hard.",
-    "Small progress each day leads to big results.",
-  ]);
+  const [progress, setProgress] = useState({});
+  const [quote, setQuote] = useState("");
 
-  const batches = [class11, class12];
+  const quotes = [
+    "Success is no accident!",
+    "Hard work beats talent!",
+    "Push yourself, no one else will!",
+    "Small steps every day!",
+    "Consistency is power!",
+    "Focus = Success!"
+  ];
+
+  useEffect(() => {
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, [selectedLecture]);
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
-  const filteredBatches = batches.filter((b) =>
+  const toggleComplete = (lecId) => {
+    const updated = { ...progress };
+    updated[lecId] = !updated[lecId];
+    setProgress(updated);
+
+    localStorage.setItem("progress", JSON.stringify(updated));
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem("progress");
+    if (saved) setProgress(JSON.parse(saved));
+  }, []);
+
+  const filteredBatches = batches.filter(b =>
     b.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const calcProgress = () => {
+  const calcPercentage = () => {
     if (!selectedChapter) return 0;
-    const total = selectedChapter.lectures.length;
-    const done = JSON.parse(localStorage.getItem("doneLectures") || "[]");
-    const completed = selectedChapter.lectures.filter((l) =>
-      done.includes(l.id)
-    ).length;
-    return Math.round((completed / total) * 100);
-  };
 
-  const markDone = (id) => {
-    let done = JSON.parse(localStorage.getItem("doneLectures") || "[]");
-    if (!done.includes(id)) {
-      done.push(id);
-      localStorage.setItem("doneLectures", JSON.stringify(done));
-    }
-    setSelectedLecture({ ...selectedLecture }); // refresh
+    const total = selectedChapter.lectures.length;
+    const done = selectedChapter.lectures.filter(l => progress[l.id]).length;
+
+    return Math.round((done / total) * 100);
   };
 
   return (
     <div>
-      {/* ---------------- HEADER ---------------- */}
+      {/* 🔥 Premium Header */}
       <div className="hero">
         <h1 className="logo">Modestudy</h1>
       </div>
 
-      {/* THEME TOGGLE */}
+      {/* Theme Toggle */}
       <button className="theme-toggle" onClick={toggleTheme}>
-        {darkTheme ? "☀ Light Mode" : "🌙 Dark Mode"}
+        {darkTheme ? "Light Mode 🌤" : "Dark Mode 🌙"}
       </button>
 
-      {/* SEARCH BAR */}
+      {/* Search */}
       <div className="search-box">
         <input
           type="text"
@@ -71,26 +83,25 @@ function App() {
         />
       </div>
 
-      {/* BACK NAVIGATION */}
-      <div className="back-nav">
+      {/* Navigation */}
+      <div className="nav-controls">
         {selectedLecture && (
-          <button onClick={() => setSelectedLecture(null)}>⬅ Back</button>
+          <button onClick={() => setSelectedLecture(null)}>🔙 Back</button>
         )}
         {!selectedLecture && selectedChapter && (
-          <button onClick={() => setSelectedChapter(null)}>⬅ Back</button>
+          <button onClick={() => setSelectedChapter(null)}>🔙 Back</button>
         )}
         {!selectedChapter && selectedSubject && (
-          <button onClick={() => setSelectedSubject(null)}>⬅ Back</button>
+          <button onClick={() => setSelectedSubject(null)}>🔙 Back</button>
         )}
         {!selectedSubject && selectedBatch && (
-          <button onClick={() => setSelectedBatch(null)}>⬅ Back</button>
+          <button onClick={() => setSelectedBatch(null)}>🔙 Home</button>
         )}
       </div>
 
-      {/* ---------------- MAIN SCREENS ---------------- */}
-
-      {/* BATCH SCREEN */}
+      {/* UI Switch */}
       {!selectedBatch ? (
+        /* ------------------------- BATCHES ---------------------------- */
         <div className="grid">
           {filteredBatches.map((batch) => (
             <div
@@ -98,16 +109,18 @@ function App() {
               className="card"
               onClick={() => setSelectedBatch(batch)}
             >
-              <img src={batch.img} alt={batch.name} />
+              <div className="img-wrap">
+                <img src={batch.img} alt={batch.name} />
+              </div>
               <div className="meta">
                 <div className="name">{batch.name}</div>
-                <div className="sub">Tap to open subjects</div>
+                <div className="sub">Open Subjects →</div>
               </div>
             </div>
           ))}
         </div>
-      ) : // SUBJECT SCREEN
-      !selectedSubject ? (
+      ) : !selectedSubject ? (
+        /* ------------------------- SUBJECTS ---------------------------- */
         <div className="list">
           <h2>{selectedBatch.name}</h2>
           {selectedBatch.subjects.map((sub) => (
@@ -116,8 +129,8 @@ function App() {
             </button>
           ))}
         </div>
-      ) : // CHAPTER SCREEN
-      !selectedChapter ? (
+      ) : !selectedChapter ? (
+        /* ------------------------- CHAPTERS ---------------------------- */
         <div className="list">
           <h2>{selectedSubject.name}</h2>
           {selectedSubject.chapters.map((ch) => (
@@ -126,99 +139,70 @@ function App() {
             </button>
           ))}
         </div>
-      ) : // LECTURE LIST SCREEN
-      !selectedLecture ? (
+      ) : !selectedLecture ? (
+        /* ------------------------- LECTURES ---------------------------- */
         <div className="list">
           <h2>{selectedChapter.name}</h2>
 
-          {/* RESOURCES */}
+          <div className="progress-box">
+            Progress: {calcPercentage()}%
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: calcPercentage() + "%" }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Resources */}
           <div className="resources">
-            {selectedChapter.notes && <a href={selectedChapter.notes}>📒 Notes</a>}
-            {selectedChapter.sheet && <a href={selectedChapter.sheet}>📘 Sheet</a>}
-            {selectedChapter.dpp && <a href={selectedChapter.dpp}>📄 DPP</a>}
+            {selectedChapter.notes && (
+              <a href={selectedChapter.notes} target="_blank">📒 Notes</a>
+            )}
+            {selectedChapter.sheet && (
+              <a href={selectedChapter.sheet} target="_blank">📘 Sheet</a>
+            )}
+            {selectedChapter.dpp && (
+              <a href={selectedChapter.dpp} target="_blank">📄 DPP</a>
+            )}
             {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo}>🎥 DPP Video</a>
+              <a href={selectedChapter.dppVideo} target="_blank">🎥 DPP Video</a>
             )}
           </div>
 
-          {/* PROGRESS */}
-          <p className="progress">Progress: {calcProgress()}%</p>
-
-          {/* LECTURES */}
-          {selectedChapter.lectures.map((lec) => {
-            const completed = JSON.parse(
-              localStorage.getItem("doneLectures") || "[]"
-            ).includes(lec.id);
-
-            return (
-              <button key={lec.id} onClick={() => setSelectedLecture(lec)}>
-                {completed ? "✔ " : ""} {lec.title}
-              </button>
-            );
-          })}
-
-          {/* RANDOM QUOTE */}
-          <p className="quote">💡 {quotes[Math.floor(Math.random() * quotes.length)]}</p>
+          {selectedChapter.lectures.map((lec) => (
+            <button
+              key={lec.id}
+              className="lec-btn"
+              onClick={() => setSelectedLecture(lec)}
+            >
+              <input
+                type="checkbox"
+                checked={progress[lec.id] || false}
+                onChange={() => toggleComplete(lec.id)}
+                onClick={(e) => e.stopPropagation()}
+              />
+              {lec.title}
+            </button>
+          ))}
         </div>
       ) : (
-        /* ---------------- VIDEO PLAYER ---------------- */
-        <div className="video-box">
+        /* ------------------------- VIDEO ---------------------------- */
+        <div className="video-page">
           <h2>{selectedLecture.title}</h2>
 
-          {/* END SCREEN */}
-          {videoEnded && (
-            <div className="end-screen">
-              <h2>🎉 Lecture Complete!</h2>
-              <p>Great job! Start next lecture 🚀</p>
+          <div className="embed">
+            <iframe
+              src={selectedLecture.url + "&autoplay=1&mute=0"}
+              title={selectedLecture.title}
+              allow="autoplay; encrypted-media; fullscreen"
+              sandbox="allow-same-origin allow-scripts"
+              allowFullScreen
+            ></iframe>
+          </div>
 
-              <button
-                onClick={() => {
-                  markDone(selectedLecture.id);
-                  setVideoEnded(false);
-                  const nextIndex =
-                    selectedChapter.lectures.indexOf(selectedLecture) + 1;
-
-                  if (selectedChapter.lectures[nextIndex]) {
-                    setSelectedLecture(selectedChapter.lectures[nextIndex]);
-                  }
-                }}
-              >
-                ▶ Next Lecture
-              </button>
-
-              <button
-                onClick={() => {
-                  setVideoEnded(false);
-                  const iframe = document.getElementById("player-frame");
-                  iframe.src = iframe.src;
-                }}
-              >
-                🔁 Replay
-              </button>
-            </div>
-          )}
-
-          {/* IFRAME */}
-          <iframe
-            id="player-frame"
-            src={selectedLecture.url.replace("?pub=4no3cq", "")}
-            allow="autoplay; fullscreen; encrypted-media"
-            sandbox="allow-same-origin allow-scripts allow-presentation"
-            allowFullScreen
-            onLoad={() => {
-              setTimeout(() => {
-                try {
-                  const vid = document
-                    .getElementById("player-frame")
-                    .contentWindow.document.querySelector("video");
-
-                  if (vid) {
-                    vid.onended = () => setVideoEnded(true);
-                  }
-                } catch {}
-              }, 1500);
-            }}
-          ></iframe>
+          {/* Motivational quote */}
+          <div className="quote-box">✨ {quote}</div>
         </div>
       )}
     </div>
