@@ -1,11 +1,6 @@
-// src/App.jsx
 import React, { useState } from "react";
-import BatchGrid from "./components/BatchGrid";
-import SubjectList from "./components/SubjectList";
-import ContentTabs from "./components/ContentTabs";
-import VideoPlayer from "./components/VideoPlayer";
-import SearchBar from "./components/SearchBar";
-
+import { class11 } from "./data/class11";
+import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
 function App() {
@@ -13,44 +8,12 @@ function App() {
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
-  const [selectedVideo, setSelectedVideo] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
-
-  const batches = [
-    {
-      id: "b1",
-      name: "CLASS 11th (JP SIR)",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800",
-      class: "11th",
-      sir: "JP SIR",
-      subjects: [
-        {
-          id: "phy",
-          name: "Physics",
-          chapters: [
-            {
-              id: "c1",
-              name: "Basic Mechanics",
-              notes: ["https://example.com/notes.pdf"],
-              sheet: ["https://example.com/sheet.pdf"],
-              dpp: ["https://example.com/dpp.pdf"],
-              dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
-              lectures: [
-                { id: "l1", title: "Lecture 1 — Intro", url: "https://odysee.com/$/embed/p8Ho7dGvF1" },
-                { id: "l2", title: "Lecture 2 — Motion", url: "https://www.youtube.com/embed/tgbNymZ7vqY" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    // Add more batches here
-  ];
 
   const filteredBatches = batches.filter((b) =>
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -67,43 +30,90 @@ function App() {
       </button>
 
       {!selectedBatch && (
-        <>
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          <BatchGrid batches={filteredBatches} onSelect={setSelectedBatch} />
-        </>
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="🔎 Search batches..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       )}
 
+      {/* Batch Grid */}
+      {!selectedBatch && (
+        <div className="grid">
+          {filteredBatches.map((batch) => (
+            <div
+              key={batch.id}
+              className="card"
+              onClick={() => setSelectedBatch(batch)}
+            >
+              <img src={batch.img} alt={batch.name} />
+              <div className="meta">
+                <div className="name">{batch.name}</div>
+                <div className="sub">📚 Tap to open subjects</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Subject List */}
       {selectedBatch && !selectedSubject && (
-        <SubjectList
-          batch={selectedBatch}
-          onSelect={setSelectedSubject}
-          onBack={() => setSelectedBatch(null)}
-        />
+        <div className="list">
+          <h2>📘 {selectedBatch.name}</h2>
+          {selectedBatch.subjects.map((sub) => (
+            <button key={sub.id} onClick={() => setSelectedSubject(sub)}>
+              {sub.name} — View Chapters
+            </button>
+          ))}
+          <button onClick={() => setSelectedBatch(null)}>🔙 Back to Batches</button>
+        </div>
       )}
 
+      {/* Chapter List */}
       {selectedSubject && !selectedChapter && (
-        <ContentTabs
-          chapter={{ lectures: [], notes: [], dpp: [] }} // placeholder
-          onSelectVideo={(lec) => setSelectedVideo(lec)}
-          onBack={() => setSelectedSubject(null)}
-          chapters={selectedSubject.chapters} // pass chapters here
-          onSelectChapter={(ch) => setSelectedChapter(ch)}
-        />
+        <div className="list">
+          <h2>📗 {selectedSubject.name} — Chapters</h2>
+          {selectedSubject.chapters.map((ch) => (
+            <button key={ch.id} onClick={() => setSelectedChapter(ch)}>
+              {ch.name} — View Resources
+            </button>
+          ))}
+          <button onClick={() => setSelectedSubject(null)}>🔙 Back to Subjects</button>
+        </div>
       )}
 
-      {selectedChapter && !selectedVideo && (
-        <ContentTabs
-          chapter={selectedChapter}
-          onSelectVideo={setSelectedVideo}
-          onBack={() => setSelectedChapter(null)}
-        />
-      )}
+      {/* Lecture + Notes/Sheet/DPP/DPP Video */}
+      {selectedChapter && (
+        <div className="list">
+          <h2>🎬 {selectedChapter.name}</h2>
 
-      {selectedVideo && (
-        <VideoPlayer
-          video={selectedVideo}
-          onBack={() => setSelectedVideo(null)}
-        />
+          {/* Resources */}
+          <div className="resources">
+            {selectedChapter.notes.map((note, i) => (
+              <a key={i} href={note} target="_blank" rel="noopener noreferrer">📄 Notes PDF</a>
+            ))}
+            <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">📑 Sheet PDF</a>
+            {selectedChapter.dpp.map((dpp, i) => (
+              <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">🧩 DPP PDF</a>
+            ))}
+            <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">🎥 DPP Video</a>
+          </div>
+
+          {/* Lecture Videos */}
+          {selectedChapter.lectures.map((lec) => (
+            <div key={lec.id} className="lecture-card">
+              <h3>{lec.title}</h3>
+              <div className="video-container">
+                <iframe src={lec.embed} title={lec.title} allowFullScreen></iframe>
+              </div>
+            </div>
+          ))}
+
+          <button onClick={() => setSelectedChapter(null)}>🔙 Back to Chapters</button>
+        </div>
       )}
     </div>
   );
