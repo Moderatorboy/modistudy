@@ -1,46 +1,36 @@
-// src/App.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { class11 } from "./data/class11";
 import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
-/* placeholders */
 const PLACEHOLDER_BATCH = "/images/placeholder_batch.png";
 const PLACEHOLDER_TEACHER = "/images/placeholder_teacher.png";
 const PLACEHOLDER_CHAPTER = "/images/placeholder_chapter.png";
 
-/* Utility: extract rumble id from embed/url and return thumbnail URL */
+// Rumble utility
 function rumbleIdFromUrl(url) {
   try {
-    // try /embed/<id>
-    let m = url.match(/\/embed\/([a-zA-Z0-9_-]+)/);
-    if (m && m[1]) return m[1];
-    // try /v<id> or /<id>.html patterns -> pick last path segment without extension
-    m = url.match(/\/([a-zA-Z0-9_-]+)(?:\.html|$)/g);
-    if (m && m.length) {
-      const last = m[m.length - 1].replace(/\//g, "");
-      return last;
-    }
-  } catch (e) {}
+    const m =
+      url.match(/\/embed\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/\/([a-zA-Z0-9_-]+)(?:\.html|$)/);
+    if (m) return m[1];
+  } catch {}
   return null;
 }
 function rumbleThumbnail(url) {
   const id = rumbleIdFromUrl(url);
   if (!id) return PLACEHOLDER_CHAPTER;
-  // common pattern that works often
   return `https://rumble.com/${id}.thumbnail.jpg`;
 }
 
-/* Quiz modal same as before (unchanged) */
+// Quiz modal
 function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
-  const [answers, setAnswers] = useState(() =>
-    (quiz?.questions || []).map(() => null)
-  );
-  const [timeLeft, setTimeLeft] = useState(quiz?.time || 0);
+  const [answers, setAnswers] = useState(quiz.questions.map(() => null));
+  const [timeLeft, setTimeLeft] = useState(quiz.time || 0);
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (!quiz?.time) return;
+    if (!quiz.time) return;
     setTimeLeft(quiz.time);
     timerRef.current = setInterval(() => {
       setTimeLeft((t) => {
@@ -53,16 +43,15 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-    // eslint-disable-next-line
   }, [quiz]);
 
-  function handleChoose(qIdx, optIdx) {
+  const handleChoose = (qIdx, optIdx) => {
     const n = [...answers];
     n[qIdx] = optIdx;
     setAnswers(n);
-  }
+  };
 
-  function handleSubmit() {
+  const handleSubmit = () => {
     clearInterval(timerRef.current);
     const total = quiz.questions.length;
     let correct = 0;
@@ -81,7 +70,7 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
     };
     onSubmit(result);
     onClose();
-  }
+  };
 
   return (
     <div className="quiz-modal">
@@ -90,7 +79,6 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
           <h3>{quiz.title || "DPP Quiz"}</h3>
           <div className="quiz-timer">⏱ {formatTime(timeLeft)}</div>
         </div>
-
         <div className="quiz-body">
           {quiz.questions.map((q, i) => (
             <div key={i} className="quiz-q">
@@ -112,7 +100,6 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
             </div>
           ))}
         </div>
-
         <div className="quiz-actions">
           <button className="btn-muted" onClick={onClose}>Cancel</button>
           <button className="btn-primary" onClick={handleSubmit}>Submit Quiz</button>
@@ -122,24 +109,23 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
   );
 }
 
-/* helpers */
+// Helpers
 function formatTime(sec) {
   const m = Math.floor(sec / 60).toString().padStart(2, "0");
   const s = Math.floor(sec % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
+// App
 export default function App() {
   const batches = [class11, class12];
 
-  // UI state
   const [search, setSearch] = useState("");
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
 
-  // persistent state
   const [completedMap, setCompletedMap] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("ms_completed") || "{}");
@@ -147,7 +133,6 @@ export default function App() {
       return {};
     }
   });
-
   const [quizResults, setQuizResults] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("ms_quiz_results") || "{}");
@@ -156,20 +141,17 @@ export default function App() {
     }
   });
 
-  // UI extras
   const [showQuiz, setShowQuiz] = useState(false);
   const [activeQuiz, setActiveQuiz] = useState(null);
-  const [menuOpenFor, setMenuOpenFor] = useState(null); // lecture id for 3-dot
+  const [menuOpenFor, setMenuOpenFor] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("ms_completed", JSON.stringify(completedMap));
   }, [completedMap]);
-
   useEffect(() => {
     localStorage.setItem("ms_quiz_results", JSON.stringify(quizResults));
   }, [quizResults]);
 
-  // search filter (multi-level)
   const q = search.trim().toLowerCase();
   const filteredBatches = batches.filter((b) => {
     if (!q) return true;
@@ -180,17 +162,10 @@ export default function App() {
     });
   });
 
-  // computed: chapter progress: count items (lectures + notes + sheet + dpp + dppVideo + quiz)
   function chapterPercent(ch) {
     if (!ch) return 0;
-    let items = 0;
-    let done = 0;
-    // lectures
-    (ch.lectures || []).forEach((l) => {
-      items++;
-      if (completedMap[l.id]) done++;
-    });
-    // resources
+    let items = 0, done = 0;
+    (ch.lectures || []).forEach(l => { items++; if (completedMap[l.id]) done++; });
     if (ch.notes) { items++; if (completedMap[`${ch.id}_notes`]) done++; }
     if (ch.sheet) { items++; if (completedMap[`${ch.id}_sheet`]) done++; }
     if (ch.dpp) { items++; if (completedMap[`${ch.id}_dpp`]) done++; }
@@ -201,29 +176,13 @@ export default function App() {
   }
 
   function toggleComplete(id) {
-    setCompletedMap((prev) => {
-      const next = { ...prev, [id]: !prev[id] };
-      return next;
-    });
+    setCompletedMap(prev => ({ ...prev, [id]: !prev[id] }));
   }
 
   function openQuiz(chapter) {
-    if (!chapter.dppQuiz) {
-      alert("No quiz found for this chapter.");
-      return;
-    }
+    if (!chapter.dppQuiz) { alert("No quiz found"); return; }
     setActiveQuiz(chapter.dppQuiz);
     setShowQuiz(true);
-  }
-
-  function onSubmitQuiz(chId, result) {
-    // save result under chapter id
-    setQuizResults((prev) => {
-      const next = { ...prev, [chId]: result };
-      return next;
-    });
-    // mark quiz completed (for progress)
-    setCompletedMap((p) => ({ ...p, [`${chId}_quiz`]: true }));
   }
 
   return (
@@ -235,28 +194,17 @@ export default function App() {
             className="ms-search"
             placeholder="Search batch / subject / chapter..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
           />
         </div>
       </header>
 
       <main className="ms-main">
-        {/* BATCH LIST */}
         {!selectedBatch ? (
           <section className="ms-grid">
-            {filteredBatches.map((b) => (
-              <div
-                key={b.id}
-                className="ms-card"
-                onClick={() => { setSelectedBatch(b); setSelectedSubject(null); }}
-              >
-                <div className="ms-card-thumb">
-                  <img
-                    src={b.img || PLACEHOLDER_BATCH}
-                    alt={b.name}
-                    style={{ width: "100%", height: "auto", objectFit: "contain", background: "#000" }}
-                  />
-                </div>
+            {filteredBatches.map(b => (
+              <div key={b.id} className="ms-card" onClick={() => { setSelectedBatch(b); setSelectedSubject(null); }}>
+                <div className="ms-card-thumb"><img src={b.img || PLACEHOLDER_BATCH} alt={b.name} /></div>
                 <div className="ms-card-body">
                   <div className="ms-card-title">{b.name}</div>
                   <div className="ms-card-sub">Click to open subjects</div>
@@ -265,54 +213,32 @@ export default function App() {
             ))}
           </section>
         ) : !selectedSubject ? (
-          // SUBJECTS
           <section className="ms-list">
             <button className="ms-back" onClick={() => setSelectedBatch(null)}>← Home</button>
             <h2>{selectedBatch.name}</h2>
             <div className="ms-sub-grid">
-              {selectedBatch.subjects.map((s) => (
-                <div
-                  key={s.id}
-                  className="ms-sub-card"
-                  onClick={() => { setSelectedSubject(s); }}
-                >
-                  <img
-                    className="ms-sub-teacher"
-                    src={s.img || PLACEHOLDER_TEACHER}
-                    alt={s.name}
-                    style={{ width: 90, height: 90, objectFit: "contain", borderRadius: "999px", background: "#000" }}
-                  />
+              {selectedBatch.subjects.map(s => (
+                <div key={s.id} className="ms-sub-card" onClick={() => setSelectedSubject(s)}>
+                  <img className="ms-sub-teacher" src={s.img || PLACEHOLDER_TEACHER} alt={s.name} />
                   <div className="ms-sub-name">{s.name}</div>
                 </div>
               ))}
             </div>
           </section>
         ) : !selectedChapter ? (
-          // CHAPTERS (card clickable — no "Open" button)
           <section className="ms-list">
             <button className="ms-back" onClick={() => setSelectedSubject(null)}>← Back</button>
             <h2>{selectedSubject.name}</h2>
             <div className="ms-chapters">
-              {selectedSubject.chapters.map((c) => (
-                <div
-                  key={c.id}
-                  className="ms-ch-card"
-                  onClick={() => setSelectedChapter(c)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    className="ms-ch-thumb"
-                    src={c.img || (c.lectures && c.lectures[0] ? rumbleThumbnail(c.lectures[0].url) : PLACEHOLDER_CHAPTER)}
-                    alt={c.name}
-                    style={{ width: 140, height: "auto", objectFit: "contain", borderRadius: 8, background: "#000" }}
-                  />
+              {selectedSubject.chapters.map(c => (
+                <div key={c.id} className="ms-ch-card">
+                  <img className="ms-ch-thumb" src={c.img || (c.lectures && c.lectures[0] ? rumbleThumbnail(c.lectures[0].url) : PLACEHOLDER_CHAPTER)} alt={c.name} />
                   <div className="ms-ch-body">
                     <div className="ms-ch-title">{c.name}</div>
                     <div className="ms-ch-meta">
                       <div className="ms-ch-percent">{chapterPercent(c)}% completed</div>
                       <div className="ms-ch-actions">
-                        {/* Removed Open button — entire card is clickable */}
-                        {c.dppQuiz && <button className="ms-quiz-btn" onClick={(e) => { e.stopPropagation(); openQuiz(c); }}>Start DPP Quiz</button>}
+                        {c.dppQuiz && <button className="ms-quiz-btn" onClick={() => openQuiz(c)}>Start DPP Quiz</button>}
                       </div>
                     </div>
                     <div className="ms-progress-shell">
@@ -323,12 +249,11 @@ export default function App() {
               ))}
             </div>
           </section>
-        ) : !selectedLecture ? (
-          // LECTURE list + resources
+        ) : (
           <section className="ms-list">
             <button className="ms-back" onClick={() => setSelectedChapter(null)}>← Back</button>
             <h2>{selectedChapter.name}</h2>
-
+            {/* Lecture + resources list */}
             <div className="ms-resources-row">
               {selectedChapter.notes && <a className="ms-resource" href={selectedChapter.notes} target="_blank" rel="noreferrer" onClick={() => toggleComplete(`${selectedChapter.id}_notes`)}>📒 Notes</a>}
               {selectedChapter.sheet && <a className="ms-resource" href={selectedChapter.sheet} target="_blank" rel="noreferrer" onClick={() => toggleComplete(`${selectedChapter.id}_sheet`)}>📘 Sheet</a>}
@@ -336,38 +261,27 @@ export default function App() {
               {selectedChapter.dppVideo && <a className="ms-resource" href={selectedChapter.dppVideo} target="_blank" rel="noreferrer" onClick={() => toggleComplete(`${selectedChapter.id}_dppVideo`)}>🎥 DPP Video</a>}
               {selectedChapter.dppQuiz && <button className="ms-resource ms-resource-quiz" onClick={() => openQuiz(selectedChapter)}>📝 DPP Quiz</button>}
             </div>
-
             <div className="ms-lecture-list">
-              {selectedChapter.lectures.map((lec) => {
+              {selectedChapter.lectures.map(lec => {
                 const completed = !!completedMap[lec.id];
                 return (
                   <div key={lec.id} className="ms-lecture-row">
-                    <div className="ms-lecture-left" onClick={() => setSelectedLecture(lec)} style={{ cursor: "pointer" }}>
-                      <img
-                        className="ms-lecture-thumb"
-                        src={rumbleThumbnail(lec.url)}
-                        alt={lec.title}
-                        style={{ width: 110, height: "auto", objectFit: "contain", borderRadius: 6, background: "#000" }}
-                      />
+                    <div className="ms-lecture-left" onClick={() => setSelectedLecture(lec)}>
+                      <img className="ms-lecture-thumb" src={rumbleThumbnail(lec.url)} alt={lec.title} />
                       <div className="ms-lecture-info">
                         <div className="ms-lecture-title">{lec.title}</div>
                         <div className="ms-lecture-sub">{lec.duration || ""}</div>
                       </div>
                     </div>
-
                     <div className="ms-lecture-right">
                       <button className="ms-dots" onClick={(e) => { e.stopPropagation(); setMenuOpenFor(menuOpenFor === lec.id ? null : lec.id); }}>⋯</button>
-
-                      {/* small menu */}
                       {menuOpenFor === lec.id && (
-                        <div className="ms-menu" onClick={(e) => e.stopPropagation()}>
+                        <div className="ms-menu" onClick={e => e.stopPropagation()}>
                           <button onClick={() => { toggleComplete(lec.id); setMenuOpenFor(null); }}>{completed ? "Unmark Complete" : "Mark Complete"}</button>
                           <button onClick={() => { window.open(lec.url, "_blank"); setMenuOpenFor(null); }}>Open in Rumble</button>
                           <button onClick={() => { navigator.clipboard?.writeText(lec.url); alert("Link copied"); setMenuOpenFor(null); }}>Copy link</button>
                         </div>
                       )}
-
-                      {/* green tick */}
                       {completed && (<svg className="ms-tick" viewBox="0 0 24 24"><path fill="none" stroke="#00e676" strokeWidth="2.5" d="M4 12l4 4L20 6" /></svg>)}
                     </div>
                   </div>
@@ -375,51 +289,17 @@ export default function App() {
               })}
             </div>
           </section>
-        ) : (
-          // VIDEO player page
-          <section className="ms-player">
-            <button className="ms-back" onClick={() => setSelectedLecture(null)}>← Back</button>
-            <h2>{selectedLecture.title}</h2>
-            <div className="ms-player-wrap">
-              {/* overlay blocker to hide suggested thumbnails */}
-              <div className="ms-player-overlay" />
-              <iframe
-                className="ms-player-iframe"
-                src={selectedLecture.url}
-                title={selectedLecture.title}
-                allow="autoplay; fullscreen"
-                sandbox="allow-same-origin allow-scripts allow-presentation"
-                allowFullScreen
-                onLoad={() => {
-                  // mark lecture done when iframe loads
-                  setCompletedMap((p) => ({ ...p, [selectedLecture.id]: true }));
-                }}
-              />
-            </div>
-
-            <div className="ms-player-actions">
-              <button onClick={() => { setCompletedMap((p) => ({ ...p, [selectedLecture.id]: true })); }} className="btn-primary">Mark Complete</button>
-
-              {/* quiz summary if any */}
-              {selectedChapter.dppQuiz && quizResults[selectedChapter.id] && (
-                <div className="ms-quiz-summary">
-                  <div>Quiz: {quizResults[selectedChapter.id].score}%</div>
-                  <div>{quizResults[selectedChapter.id].correct}/{quizResults[selectedChapter.id].total} correct</div>
-                </div>
-              )}
-            </div>
-          </section>
         )}
       </main>
 
-      {/* QUIZ MODAL */}
       {showQuiz && activeQuiz && (
         <QuizModal
           quiz={activeQuiz}
           onClose={() => setShowQuiz(false)}
           onSubmit={(res) => {
             const chId = selectedChapter ? selectedChapter.id : activeQuiz.chapterId || "unknown";
-            setQuizResults((p) => ({ ...p, [chId]: res }));
+            setQuizResults(p => ({ ...p, [chId]: res }));
+            setCompletedMap(p => ({ ...p, [`${chId}_quiz`]: true }));
             setShowQuiz(false);
           }}
           existingResult={quizResults[selectedChapter?.id]}
