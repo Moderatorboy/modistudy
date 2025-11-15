@@ -15,6 +15,8 @@ function App() {
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
+  const batches = [...class11, ...class12]; // Merge both classes
+
   const filteredBatches = batches.filter((b) =>
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -93,13 +95,21 @@ function App() {
           {/* Resources */}
           <div className="resources">
             {selectedChapter.notes.map((note, i) => (
-              <a key={i} href={note} target="_blank" rel="noopener noreferrer">📄 Notes PDF</a>
+              <a key={i} href={note} target="_blank" rel="noopener noreferrer">
+                📄 Notes PDF
+              </a>
             ))}
-            <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">📑 Sheet PDF</a>
+            <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">
+              📑 Sheet PDF
+            </a>
             {selectedChapter.dpp.map((dpp, i) => (
-              <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">🧩 DPP PDF</a>
+              <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">
+                🧩 DPP PDF
+              </a>
             ))}
-            <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">🎥 DPP Video</a>
+            <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">
+              🎥 DPP Video
+            </a>
           </div>
 
           {/* Lecture Videos */}
