@@ -6,6 +6,7 @@ export const class11 = {
     {
       id: "phy",
       name: "PHYSICS (NS SIR)",
+      img: "/images/nssir.png", // teacher photo / subject image
       chapters: [
         {
           id: "c1",
