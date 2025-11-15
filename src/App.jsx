@@ -15,7 +15,8 @@ function App() {
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
-  const batches = [...class11, ...class12]; // Merge both classes
+  // Combine class11 and class12 into batches
+  const batches = [...class11, ...class12];
 
   const filteredBatches = batches.filter((b) =>
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,33 +95,40 @@ function App() {
 
           {/* Resources */}
           <div className="resources">
-            {selectedChapter.notes.map((note, i) => (
-              <a key={i} href={note} target="_blank" rel="noopener noreferrer">
-                📄 Notes PDF
+            {selectedChapter.notes &&
+              selectedChapter.notes.map((note, i) => (
+                <a key={i} href={note} target="_blank" rel="noopener noreferrer">
+                  📄 Notes PDF
+                </a>
+              ))}
+            {selectedChapter.sheet && (
+              <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">
+                📑 Sheet PDF
               </a>
-            ))}
-            <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">
-              📑 Sheet PDF
-            </a>
-            {selectedChapter.dpp.map((dpp, i) => (
-              <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">
-                🧩 DPP PDF
+            )}
+            {selectedChapter.dpp &&
+              selectedChapter.dpp.map((dpp, i) => (
+                <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">
+                  🧩 DPP PDF
+                </a>
+              ))}
+            {selectedChapter.dppVideo && (
+              <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">
+                🎥 DPP Video
               </a>
-            ))}
-            <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">
-              🎥 DPP Video
-            </a>
+            )}
           </div>
 
           {/* Lecture Videos */}
-          {selectedChapter.lectures.map((lec) => (
-            <div key={lec.id} className="lecture-card">
-              <h3>{lec.title}</h3>
-              <div className="video-container">
-                <iframe src={lec.embed} title={lec.title} allowFullScreen></iframe>
+          {selectedChapter.lectures &&
+            selectedChapter.lectures.map((lec) => (
+              <div key={lec.id} className="lecture-card">
+                <h3>{lec.title}</h3>
+                <div className="video-container">
+                  <iframe src={lec.embed} title={lec.title} allowFullScreen></iframe>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
           <button onClick={() => setSelectedChapter(null)}>🔙 Back to Chapters</button>
         </div>
