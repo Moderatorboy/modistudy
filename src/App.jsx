@@ -1,6 +1,8 @@
+// src/App.jsx
 import React, { useState } from "react";
 import { class11 } from "./data/class11";
 import { class12 } from "./data/class12";
+import ContentTabs from "./components/ContentTabs"; // fixed ContentTabs
 import "./styles/theme.css";
 
 function App() {
@@ -8,16 +10,18 @@ function App() {
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const [selectedLecture, setSelectedLecture] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Combine class11 and class12 into a single batches array
-  const batches = [...class11, ...class12];
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
     document.body.classList.toggle("alt-theme", !darkTheme);
   };
 
+  // Combine batches
+  const batches = [class11, class12];
+
+  // Filter by search
   const filteredBatches = batches.filter((b) =>
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -32,6 +36,7 @@ function App() {
         {darkTheme ? "🌤 Light Mode" : "🌙 Dark Mode"}
       </button>
 
+      {/* Search Box */}
       {!selectedBatch && (
         <div className="search-box">
           <input
@@ -88,53 +93,39 @@ function App() {
         </div>
       )}
 
-      {/* Lecture + Notes/Sheet/DPP/DPP Video */}
-      {selectedChapter && (
+      {/* Chapter Content + Lecture Tabs */}
+      {selectedChapter && !selectedLecture && (
+        <ContentTabs
+          chapter={{
+            ...selectedChapter,
+            // Make notes, dpp, sheet arrays if they are strings
+            notes: Array.isArray(selectedChapter.notes)
+              ? selectedChapter.notes
+              : selectedChapter.notes ? [selectedChapter.notes] : [],
+            dpp: Array.isArray(selectedChapter.dpp)
+              ? selectedChapter.dpp
+              : selectedChapter.dpp ? [selectedChapter.dpp] : [],
+            sheet: Array.isArray(selectedChapter.sheet)
+              ? selectedChapter.sheet
+              : selectedChapter.sheet ? [selectedChapter.sheet] : [],
+          }}
+          onSelectVideo={(lec) => setSelectedLecture(lec)}
+          onBack={() => setSelectedChapter(null)}
+        />
+      )}
+
+      {/* Lecture Player */}
+      {selectedLecture && (
         <div className="list">
-          <h2>🎬 {selectedChapter.name}</h2>
-
-          {/* Resources */}
-          <div className="resources">
-            {(Array.isArray(selectedChapter.notes) ? selectedChapter.notes : [selectedChapter.notes]).map(
-              (note, i) => note && (
-                <a key={i} href={note} target="_blank" rel="noopener noreferrer">
-                  📄 Notes PDF
-                </a>
-              )
-            )}
-
-            {selectedChapter.sheet && (
-              <a href={selectedChapter.sheet} target="_blank" rel="noopener noreferrer">
-                📑 Sheet PDF
-              </a>
-            )}
-
-            {(Array.isArray(selectedChapter.dpp) ? selectedChapter.dpp : [selectedChapter.dpp]).map(
-              (dpp, i) => dpp && (
-                <a key={i} href={dpp} target="_blank" rel="noopener noreferrer">
-                  🧩 DPP PDF
-                </a>
-              )
-            )}
-
-            {selectedChapter.dppVideo && (
-              <a href={selectedChapter.dppVideo} target="_blank" rel="noopener noreferrer">
-                🎥 DPP Video
-              </a>
-            )}
+          <h2>🎬 {selectedLecture.title}</h2>
+          <div className="video-container">
+            <iframe
+              src={selectedLecture.embed}
+              title={selectedLecture.title}
+              allowFullScreen
+            ></iframe>
           </div>
-
-          {/* Lecture Videos */}
-          {selectedChapter.lectures.map((lec) => (
-            <div key={lec.id} className="lecture-card">
-              <h3>{lec.title}</h3>
-              <div className="video-container">
-                <iframe src={lec.embed} title={lec.title} allowFullScreen></iframe>
-              </div>
-            </div>
-          ))}
-
-          <button onClick={() => setSelectedChapter(null)}>🔙 Back to Chapters</button>
+          <button onClick={() => setSelectedLecture(null)}>🔙 Back to Chapter</button>
         </div>
       )}
     </div>
