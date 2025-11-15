@@ -6,7 +6,7 @@ export const class11 = {
     {
       id: "phy",
       name: "PHYSICS (NS SIR)",
-      img: "/images/nssir.png", // teacher photo / subject image
+      img: "/images/nssir.jpg", // teacher photo / subject image
       chapters: [
         {
           id: "c1",
@@ -15,6 +15,14 @@ export const class11 = {
           sheet: "https://example.com/sheet_mechanics.pdf",
           dpp: "https://example.com/dpp_mechanics.pdf",
           dppVideo: "https://odysee.com/$/embed/p8Ho7dGvF1",
+          dppQuiz: {
+            title: "Units & Dimensions — DPP 01",
+            time: 300, // seconds
+            questions: [
+              { q: "Unit of force?", options: ["N", "J", "W", "Pa"], correct: 0 },
+              { q: "Dimension of velocity?", options: ["L/T", "L/T^2", "M/LT", "T/L"], correct: 0 },
+            ],
+          },
           lectures: [
               { id: "p1", title: "Coordinate Systems And Vectors | L-01 | Orientation", url: "https://rumble.com/embed/v4i7lnc/?pub=4" },
               { id: "p2", title: "Coordinate Systems And Vectors | L-02 | Vector", url: "https://rumble.com/embed/v4i7lnc/?pub=4" },
@@ -310,14 +318,24 @@ export const class11 = {
     {
       id: "chem",
       name: "ORGANIC (SKM SIR)",
+      img: "/images/skmsir.jpg", // teacher photo / subject image
       chapters: [
         {
           id: "c1",
           name: "BOC",
+          img: "/images/boc.jpg",
           notes: "https://example.com/notes_cb.pdf",
           sheet: "https://example.com/sheet_cb.pdf",
           dpp: "https://example.com/dpp_cb.pdf",
           dppVideo: "https://odysee.com/$/embed/cbVideo",
+          dppQuiz: {
+            title: "Units & Dimensions — DPP 01",
+            time: 300, // seconds
+            questions: [
+              { q: "Unit of force?", options: ["N", "J", "W", "Pa"], correct: 0 },
+              { q: "Dimension of velocity?", options: ["L/T", "L/T^2", "M/LT", "T/L"], correct: 0 },
+            ],
+          },
           lectures: [
       { id: "BOC_L01", title: "BOC | Lecture 01 | Introduction", url: "https://rumble.com/embed/v6z8x3y/" },
       { id: "BOC_L02", title: "BOC | Lecture 02", url: "https://rumble.com/embed/v6z8z2s/" },
