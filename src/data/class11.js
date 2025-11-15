@@ -342,8 +342,7 @@ export const class11 = {
   title: "BOC | Lecture 01 | Introduction",
   url: "https://rumble.com/embed/v6z8x3y/",
   thumbnail: "https://rumble.com/thumbnail/v6z8x3y.jpg"
-}
-,
+},
       { id: "BOC_L02", title: "BOC | Lecture 02", url: "https://rumble.com/embed/v6z8z2s/" },
       { id: "BOC_L03", title: "BOC | Lecture 03", url: "https://rumble.com/embed/v6z94fo/" },
       { id: "BOC_L04", title: "BOC | Lecture 04", url: "https://rumble.com/embed/v6z9502/" },
