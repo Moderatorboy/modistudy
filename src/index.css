@@ -1,151 +1,281 @@
+/* 🌙 Default Theme */
 body {
-  background: #0b0b0b;
-  color: white;
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: #0d0d0d;
+  color: white;
+  transition: 0.3s ease-in-out;
 }
 
-.alt-theme {
-  background: #ffffff;
-  color: black;
+/* 🌤 Light Theme */
+body.alt-theme {
+  background: #f5f5f5;
+  color: #222;
 }
 
-/* HEADER */
-.top-header {
-  width: 100%;
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* 🔥 Hero Title */
+.hero {
+  text-align: center;
+  padding: 25px 10px;
+  background: linear-gradient(135deg, #6a00ff, #b300ff);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .logo {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.theme-toggle {
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #222;
+  margin: 0;
+  font-size: 35px;
+  font-weight: 800;
   color: white;
-  border: none;
-  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
-/* SEARCH */
+.subtitle {
+  font-size: 14px;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+/* 🚀 Search Box */
 .search-box {
+  margin: 20px auto;
   width: 90%;
-  margin: 0 auto 20px;
 }
 
 .search-box input {
   width: 100%;
-  padding: 13px;
+  padding: 12px 15px;
   border-radius: 12px;
   border: none;
+  font-size: 16px;
   outline: none;
-  background: #1a1a1a;
+  background: #1b1b1b;
   color: white;
-  font-size: 15px;
+  box-shadow: 0px 0px 15px #00000050 inset;
 }
 
-/* GRID */
+body.alt-theme .search-box input {
+  background: white;
+  color: #222;
+}
+
+/* 🌗 Theme Toggle */
+.theme-toggle {
+  margin: 15px auto;
+  display: block;
+  background: #6a00ff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.theme-toggle:hover {
+  background: #8800ff;
+}
+
+/* 🟦 Grid (Batches) */
 .grid {
   width: 90%;
-  margin: auto;
+  margin: 20px auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 18px;
 }
 
 .card {
-  background: #151515;
+  background: #161616;
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
   transition: 0.3s;
+  position: relative;
+  box-shadow: 0px 0px 15px #00000070;
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-4px);
 }
 
-.card-img {
+.card img {
   width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: contain;
-  padding: 10px;
-  background: #0f0f0f;
+  height: 180px;
+  object-fit: cover;
 }
 
+/* ✨ Card Text */
 .meta {
-  padding: 12px;
+  padding: 10px;
 }
 
 .name {
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .sub {
-  opacity: 0.7;
   font-size: 13px;
+  opacity: 0.7;
 }
 
-/* LIST */
+/* 🟩 List Buttons */
 .list {
   width: 90%;
-  margin: auto;
+  margin: 25px auto;
+  text-align: center;
 }
 
-.item-btn,
-.lecture-btn {
+.list h2 {
+  margin-bottom: 18px;
+}
+
+.list button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: #252525;
+  color: white;
+  transition: 0.2s;
+  box-shadow: 0px 0px 10px #00000060;
+}
+
+.list button:hover {
+  background: #333;
+}
+
+body.alt-theme .list button {
+  background: #eaeaea;
+  color: #000;
+}
+
+/* 🔙 Navigation */
+.nav {
+  width: 90%;
+  margin: 10px auto;
+}
+
+.nav button {
+  background: #6a00ff;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+}
+
+.nav button:hover {
+  background: #8500ff;
+}
+
+/* 🎥 Video Page */
+.video-page {
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.embed {
+  position: relative;
+  width: 100%;
+  height: 230px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0px 0px 15px #00000080;
+}
+
+/* 🛑 No recommended videos overlay */
+.blocker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  background: transparent;
+  pointer-events: none;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ✔ Complete Button */
+.complete-btn {
+  margin-top: 15px;
   width: 100%;
   padding: 14px;
-  margin: 8px 0;
-  background: #1a1a1a;
-  border: none;
-  color: white;
+  background: #008c4a;
   border-radius: 12px;
-  text-align: left;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* RESOURCES */
-.resources a {
-  display: inline-block;
-  margin-right: 10px;
-  padding: 8px 12px;
-  background: #222;
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
-}
-
-/* VIDEO */
-.video-box {
-  width: 90%;
-  margin: auto;
-}
-
-.player-wrapper {
-  position: relative;
-}
-
-.player {
-  width: 100%;
-  height: 240px;
   border: none;
-  border-radius: 14px;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.overlay-block {
-  position: absolute;
-  bottom: 0;
+.complete-btn:hover {
+  background: #00a85a;
+}
+
+/* 💬 Quotes */
+.quote {
+  margin-top: 18px;
+  font-size: 15px;
+  opacity: 0.9;
+  background: #1d1d1d;
+  padding: 10px 15px;
+  border-radius: 12px;
+}
+
+body.alt-theme .quote {
+  background: #e6e6e6;
+}
+
+/* 📊 Progress Bar */
+.progress {
   width: 100%;
-  height: 80px;
-  background: #0b0b0b;
+  height: 12px;
+  background: #2d2d2d;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.progress div {
+  height: 100%;
+  background: linear-gradient(90deg, #6a00ff, #c800ff);
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-text {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* 📱 Mobile Fix */
+@media (max-width: 500px) {
+  .hero {
+    padding: 18px;
+  }
+
+  .logo {
+    font-size: 28px;
+  }
+
+  .card img {
+    height: 150px;
+  }
+
+  .embed {
+    height: 200px;
+  }
 }
