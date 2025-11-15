@@ -4,6 +4,12 @@ import React, { useState } from "react";
 export default function ContentTabs({ chapter, onSelectVideo, onBack }) {
   const [tab, setTab] = useState("lectures");
 
+  // Helper to safely map over a string or array
+  const mapLinks = (item) => {
+    if (!item) return [];
+    return Array.isArray(item) ? item : [item];
+  };
+
   return (
     <div className="container">
       <div className="panel">
@@ -32,8 +38,8 @@ export default function ContentTabs({ chapter, onSelectVideo, onBack }) {
 
           {tab === "notes" && (
             <ul>
-              {chapter.notes && chapter.notes.length > 0
-                ? chapter.notes.map((n, i) => (
+              {mapLinks(chapter.notes).length > 0
+                ? mapLinks(chapter.notes).map((n, i) => (
                     <li key={i}>
                       <a href={n} target="_blank" rel="noreferrer">{n}</a>
                     </li>
@@ -44,8 +50,8 @@ export default function ContentTabs({ chapter, onSelectVideo, onBack }) {
 
           {tab === "dpp" && (
             <ul>
-              {chapter.dpp && chapter.dpp.length > 0
-                ? chapter.dpp.map((d, i) => (
+              {mapLinks(chapter.dpp).length > 0
+                ? mapLinks(chapter.dpp).map((d, i) => (
                     <li key={i}>
                       <a href={d} target="_blank" rel="noreferrer">{d}</a>
                     </li>
@@ -56,8 +62,8 @@ export default function ContentTabs({ chapter, onSelectVideo, onBack }) {
 
           {tab === "sheet" && (
             <ul>
-              {chapter.sheet && chapter.sheet.length > 0
-                ? chapter.sheet.map((s, i) => (
+              {mapLinks(chapter.sheet).length > 0
+                ? mapLinks(chapter.sheet).map((s, i) => (
                     <li key={i}>
                       <a href={s} target="_blank" rel="noreferrer">{s}</a>
                     </li>
