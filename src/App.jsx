@@ -4,54 +4,48 @@ import { class11 } from "./data/class11";
 import { class12 } from "./data/class12";
 import "./styles/theme.css";
 
-/*
- Features:
- - Auto-fetch rumble thumbnail from URL
- - 3-dot menu on video card (Mark complete / Share / Open)
- - Chapter % includes lectures + notes + sheet + dpp + dppVideo + quiz
- - DPP Quiz engine (Option C style), timer, results saved
- - Green tick icon for completed lectures
- - Save progress & quiz results to localStorage
-*/
-
+/* placeholders */
 const PLACEHOLDER_BATCH = "/images/placeholder_batch.png";
 const PLACEHOLDER_TEACHER = "/images/placeholder_teacher.png";
 const PLACEHOLDER_CHAPTER = "/images/placeholder_chapter.png";
 
-// Utility: extract rumble id from embed/url
+/* Utility: extract rumble id from embed/url and return thumbnail URL */
 function rumbleIdFromUrl(url) {
-  // examples accepted:
-  // https://rumble.com/embed/v6z8x3y/?pub=4
-  // https://rumble.com/v6z8x3y.html
   try {
-    const m = url.match(/\/embed\/([a-zA-Z0-9_-]+)/) || url.match(/\/([a-zA-Z0-9_-]+)(?:\.html|$)/);
-    if (m) return m[1];
-  } catch {}
+    // try /embed/<id>
+    let m = url.match(/\/embed\/([a-zA-Z0-9_-]+)/);
+    if (m && m[1]) return m[1];
+    // try /v<id> or /<id>.html patterns -> pick last path segment without extension
+    m = url.match(/\/([a-zA-Z0-9_-]+)(?:\.html|$)/g);
+    if (m && m.length) {
+      const last = m[m.length - 1].replace(/\//g, "");
+      return last;
+    }
+  } catch (e) {}
   return null;
 }
 function rumbleThumbnail(url) {
   const id = rumbleIdFromUrl(url);
   if (!id) return PLACEHOLDER_CHAPTER;
-  // common rumble thumbnail pattern (works often)
+  // common pattern that works often
   return `https://rumble.com/${id}.thumbnail.jpg`;
 }
 
+/* Quiz modal same as before (unchanged) */
 function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
-  // premium quiz UI — MCQ, timer, result
   const [answers, setAnswers] = useState(() =>
-    quiz.questions.map(() => null)
+    (quiz?.questions || []).map(() => null)
   );
-  const [timeLeft, setTimeLeft] = useState(quiz.time || 0);
+  const [timeLeft, setTimeLeft] = useState(quiz?.time || 0);
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (!quiz.time) return;
+    if (!quiz?.time) return;
     setTimeLeft(quiz.time);
     timerRef.current = setInterval(() => {
       setTimeLeft((t) => {
         if (t <= 1) {
           clearInterval(timerRef.current);
-          // auto submit
           handleSubmit();
           return 0;
         }
@@ -128,7 +122,7 @@ function QuizModal({ quiz, onClose, onSubmit, existingResult }) {
   );
 }
 
-// helpers
+/* helpers */
 function formatTime(sec) {
   const m = Math.floor(sec / 60).toString().padStart(2, "0");
   const s = Math.floor(sec % 60).toString().padStart(2, "0");
@@ -251,9 +245,17 @@ export default function App() {
         {!selectedBatch ? (
           <section className="ms-grid">
             {filteredBatches.map((b) => (
-              <div key={b.id} className="ms-card" onClick={() => { setSelectedBatch(b); setSelectedSubject(null); }}>
+              <div
+                key={b.id}
+                className="ms-card"
+                onClick={() => { setSelectedBatch(b); setSelectedSubject(null); }}
+              >
                 <div className="ms-card-thumb">
-                  <img src={b.img || PLACEHOLDER_BATCH} alt={b.name} />
+                  <img
+                    src={b.img || PLACEHOLDER_BATCH}
+                    alt={b.name}
+                    style={{ width: "100%", height: "auto", objectFit: "contain", background: "#000" }}
+                  />
                 </div>
                 <div className="ms-card-body">
                   <div className="ms-card-title">{b.name}</div>
@@ -269,29 +271,48 @@ export default function App() {
             <h2>{selectedBatch.name}</h2>
             <div className="ms-sub-grid">
               {selectedBatch.subjects.map((s) => (
-                <div key={s.id} className="ms-sub-card" onClick={() => { setSelectedSubject(s); }}>
-                  <img className="ms-sub-teacher" src={s.img || PLACEHOLDER_TEACHER} alt={s.name} />
+                <div
+                  key={s.id}
+                  className="ms-sub-card"
+                  onClick={() => { setSelectedSubject(s); }}
+                >
+                  <img
+                    className="ms-sub-teacher"
+                    src={s.img || PLACEHOLDER_TEACHER}
+                    alt={s.name}
+                    style={{ width: 90, height: 90, objectFit: "contain", borderRadius: "999px", background: "#000" }}
+                  />
                   <div className="ms-sub-name">{s.name}</div>
                 </div>
               ))}
             </div>
           </section>
         ) : !selectedChapter ? (
-          // CHAPTERS
+          // CHAPTERS (card clickable — no "Open" button)
           <section className="ms-list">
             <button className="ms-back" onClick={() => setSelectedSubject(null)}>← Back</button>
             <h2>{selectedSubject.name}</h2>
             <div className="ms-chapters">
               {selectedSubject.chapters.map((c) => (
-                <div key={c.id} className="ms-ch-card">
-                  <img className="ms-ch-thumb" src={c.img || (c.lectures && c.lectures[0] ? rumbleThumbnail(c.lectures[0].url) : PLACEHOLDER_CHAPTER)} alt={c.name} />
+                <div
+                  key={c.id}
+                  className="ms-ch-card"
+                  onClick={() => setSelectedChapter(c)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <img
+                    className="ms-ch-thumb"
+                    src={c.img || (c.lectures && c.lectures[0] ? rumbleThumbnail(c.lectures[0].url) : PLACEHOLDER_CHAPTER)}
+                    alt={c.name}
+                    style={{ width: 140, height: "auto", objectFit: "contain", borderRadius: 8, background: "#000" }}
+                  />
                   <div className="ms-ch-body">
                     <div className="ms-ch-title">{c.name}</div>
                     <div className="ms-ch-meta">
                       <div className="ms-ch-percent">{chapterPercent(c)}% completed</div>
                       <div className="ms-ch-actions">
-                        <button onClick={() => setSelectedChapter(c)}>Open</button>
-                        {c.dppQuiz && <button className="ms-quiz-btn" onClick={() => openQuiz(c)}>Start DPP Quiz</button>}
+                        {/* Removed Open button — entire card is clickable */}
+                        {c.dppQuiz && <button className="ms-quiz-btn" onClick={(e) => { e.stopPropagation(); openQuiz(c); }}>Start DPP Quiz</button>}
                       </div>
                     </div>
                     <div className="ms-progress-shell">
@@ -321,8 +342,13 @@ export default function App() {
                 const completed = !!completedMap[lec.id];
                 return (
                   <div key={lec.id} className="ms-lecture-row">
-                    <div className="ms-lecture-left" onClick={() => setSelectedLecture(lec)}>
-                      <img className="ms-lecture-thumb" src={rumbleThumbnail(lec.url)} alt={lec.title} />
+                    <div className="ms-lecture-left" onClick={() => setSelectedLecture(lec)} style={{ cursor: "pointer" }}>
+                      <img
+                        className="ms-lecture-thumb"
+                        src={rumbleThumbnail(lec.url)}
+                        alt={lec.title}
+                        style={{ width: 110, height: "auto", objectFit: "contain", borderRadius: 6, background: "#000" }}
+                      />
                       <div className="ms-lecture-info">
                         <div className="ms-lecture-title">{lec.title}</div>
                         <div className="ms-lecture-sub">{lec.duration || ""}</div>
@@ -392,7 +418,6 @@ export default function App() {
           quiz={activeQuiz}
           onClose={() => setShowQuiz(false)}
           onSubmit={(res) => {
-            // save under chapter id
             const chId = selectedChapter ? selectedChapter.id : activeQuiz.chapterId || "unknown";
             setQuizResults((p) => ({ ...p, [chId]: res }));
             setShowQuiz(false);
